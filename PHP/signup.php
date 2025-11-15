@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
         echo "Signup successful! You can now log in.";
-        echo "<br><a href=login.html'>Go to Login</a>";
+        echo "<br><a href='../login.html'>Go to Login</a>";
     } else {
         echo "Error: " . $stmt->error;
     }
