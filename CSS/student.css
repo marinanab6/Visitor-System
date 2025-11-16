@@ -138,7 +138,7 @@ body {
     background: #d9e7ff;
 }
 
-/* CARDS */
+
 .cards {
     display: flex;
     justify-content: space-around;
@@ -180,15 +180,29 @@ body {
 .details-btn:hover {
     background: #1E90FF;
 }
+
+.Request_container {
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto; 
+    padding: 20px;
+    background: #f5f7fb;     /* soft light background */
+    border-radius: 20px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+}
+
+/* REQUEST FORM */
 .request-form {
     width: 70%;
     max-width: 750px;
-    margin: 0 auto; 
+    margin: 0 auto;
     background: #ffffff;
     padding: 25px;
     border-radius: 18px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
 }
+
+/* INPUT FIELDS */
 .request-form input,
 .request-form textarea,
 .request-form select {
@@ -198,23 +212,61 @@ body {
     padding: 12px;
     margin-top: 8px;
     margin-bottom: 14px;
+    font-size: 15px;
 }
 
-/* Submit button */
+/* SUBMIT BUTTON */
 .submit-btn {
     width: 100%;
-    background-color: #0D47A1;
+    background-color: #0D47A1; 
     color: white;
     padding: 14px;
     border: none;
     border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
+    font-weight: 500;
 }
 
 .submit-btn:hover {
-    background-color: #083078;
+    background-color: #083078; /* darker blue */
 }
+
+/* Label for the photo upload */
+#visitorPhoto {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed #007BFF; 
+    border-radius: 8px;
+    background-color: #f0f8ff; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+
+#visitorPhoto:hover {
+    border-color: #0056b3;
+    background-color: #e0f0ff;
+}
+
+
+#visitorPhoto::file-selector-button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#visitorPhoto::file-selector-button:hover {
+    background-color: #0056b3;
+}
+
+
 * SETTINGS SECTION */
 #settingsSection {
     background: white;

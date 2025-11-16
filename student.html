@@ -65,20 +65,28 @@
         </section>
     
         <!-- NEW REQUEST FORM -->
-        <section class="submit_request.php" id="requestForm" style="display:none;">
-            <h2>New Visitor Request</h2>
+        <div class="Request_container">
 
-            <form id="visitorForm">
-                <input type="text" id="visitorName"  name="visitorName"placeholder="Enter visitor name" required>
-                <input type="tel" id="visitorPhone"  name="visitorPhone" placeholder="Enter phone number" required>
-                <input type="number" id="visitorID"  name="visitorID" placeholder="Enter ID number" required>
-                <input type="date" id="visitDate" name="visitDate" required>
-                <input type="time" id="visitTime" name="visitTime" required>
-                <textarea id="visitReason" name="visitReason" placeholder="State your purpose" required></textarea>
+    <section class="request-section" id="requestForm" >
+        <h2>New Visitor Request</h2>
 
-                <button type="submit" class="submit-btn">Submit Request</button>
-            </form>
-        </section>
+        <form id="visitorForm" class="request-form" action="PHP/submit_request.php" method="POST" >
+            <input type="text" id="visitorName" name="visitorName" placeholder="Enter visitor name" required>
+            <input type="tel" id="visitorPhone" name="visitorPhone" placeholder="Enter phone number" required>
+            <input type="number" id="visitorID" name="visitorID" placeholder="Enter ID number" required>
+            <input type="date" id="visitDate" name="visitDate" required>
+            <input type="time" id="visitTime" name="visitTime" required>
+            <textarea id="visitReason" name="visitReason" placeholder="State your purpose" required></textarea>
+
+            <label for="visitorPhoto"><b>Upload Visitor Photo:</b></label>
+            <input type="file" id="visitorPhoto" name="visitorPhoto" accept="image/*" required>
+
+            <button type="submit" class="submit-btn">Submit Request</button>
+        </form>
+    </section>
+
+</div>
+
 
         <!-- NOTIFICATIONS -->
         <section id="notificationsSection" style="display:none;">
