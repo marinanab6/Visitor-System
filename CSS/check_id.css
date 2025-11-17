@@ -1,0 +1,90 @@
+
+#checkIdSection {
+    padding:50px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 450px;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.menu_btn.check {
+    background-color: #0D47A1;
+    color:black;;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+#checkIdSection h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+#checkIdForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#checkIdForm input[type="number"] {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    outline: none;
+    transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#checkIdForm input[type="number"]:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+#checkIdForm button {
+    background-color: #0D47A1;
+    color:black;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#checkIdForm button:hover {
+    background-color: #45a049;
+}
+
+#checkIdResult {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 0.95em;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Optional: style error messages */
+#checkIdResult p {
+    margin: 5px 0;
+}
+
+#checkIdResult p.error {
+    color: red;
+}
+
+
+
