@@ -1,4 +1,4 @@
-<<?php
+<?php
 session_start();
 include 'db.php';
 
@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 3. Insert into visit table
     $stmt = $conn->prepare("
-        INSERT INTO visit (visitor_name, visitor_phone, visitor_id, visit_date, visit_time, visit_reason, student_id) 
+        INSERT INTO visit_table (visitor_name, visitor_phone, visitor_id, visit_date, visit_time, visit_reason, student_id) 
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
     $stmt->bind_param("ssisssi", $visitorName, $visitorPhone, $visitorID, $visitDate, $visitTime, $visitReason, $studentID);

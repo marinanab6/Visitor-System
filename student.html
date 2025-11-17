@@ -44,7 +44,7 @@
 
                 <div class="card">
                     <div class="icon">📄</div>
-                    <h3>Total Requests</h3>
+                    <h3> Requests Denied </h3>
                     <button class="details-btn">View details</button>
                 </div>
 
@@ -63,14 +63,13 @@
             </div>
 
         </section>
-    
-        <!-- NEW REQUEST FORM -->
+    <!-- NEW REQUEST FORM -->
         <div class="Request_container">
 
     <section class="request-section" id="requestForm" >
         <h2>New Visitor Request</h2>
 
-        <form id="visitorForm" class="request-form" action="PHP/submit_request.php" method="POST" >
+        <form id="visitorForm" class="request-form" action="PHP/submit_request.php" method="POST" enctype="multipart/form-data">
             <input type="text" id="visitorName" name="visitorName" placeholder="Enter visitor name" required>
             <input type="tel" id="visitorPhone" name="visitorPhone" placeholder="Enter phone number" required>
             <input type="number" id="visitorID" name="visitorID" placeholder="Enter ID number" required>
@@ -84,6 +83,8 @@
             <button type="submit" class="submit-btn">Submit Request</button>
         </form>
     </section>
+
+        
 
 </div>
 
@@ -107,21 +108,29 @@
             </div>
 
             <!-- PROFILE TAB -->
-            <div id="profileTab" class="settings-content">
-                <h3>Update Profile</h3>
-                <form class="settings-form">
-                    <label>Full Name</label>
-                    <input type="text" placeholder="Enter full name">
+<div id="profileTab" class="settings-content">
+    <h3>Update Profile</h3>
 
-                    <label>Email Address</label>
-                    <input type="email" placeholder="Enter email">
+    <form class="settings-form" action="PHP/update_profile.php" method="POST">
 
-                    <label>Phone Number</label>
-                    <input type="text" placeholder="Enter phone number">
+        <label>Full Name</label>
+        <input type="text" name="full_name" 
+               
+               placeholder="Enter full name" required>
 
-                    <button type="button" class="save-btn">Save Changes</button>
-                </form>
-            </div>
+        <label>Email Address</label>
+        <input type="email" name="email" 
+               placeholder="Enter email" required>
+
+        <label>Phone Number</label>
+        <input type="text" name="phone" 
+        
+               placeholder="Enter phone number" required>
+
+        <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+</div>
+
 
             <!-- PASSWORD TAB -->
             <div id="passwordTab" class="settings-content" style="display:none;">

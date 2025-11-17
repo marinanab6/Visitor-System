@@ -49,6 +49,12 @@ body {
 }
 .menu-btn:hover { background: rgba(13,71,161,0.06); }
 
+.check{
+  background-color: red;
+  color: black;
+  
+}
+
 /* Logout */
 .logout {
   margin-top: auto; width:100%; padding:12px; border-radius:10px;
