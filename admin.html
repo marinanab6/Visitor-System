@@ -22,9 +22,9 @@
 
         <div class="menu">
             <button class="menu-btn active" data-section="dashboard">📊 Dashboard</button>
-            <button class="menu-btn" data-section="requests">📥 Requests</button>
             <button class="menu-btn" data-section="notifications">🔔 Notifications</button>
             <button class="menu-btn" data-section="settings">⚙️ Settings</button>
+            <a href="manage_users.html" class="menu-btn check">👥 Manage Users</a>
         </div>
 
         <button class="logout">Logout</button>
@@ -79,20 +79,7 @@
                 </thead>
 
                 <tbody id="requestsTableBody">
-                    <!-- PHP WILL INSERT DATABASE ROWS HERE -->
-                    <?php
-                        include "db.php";
-                        $query = $conn->query("SELECT * FROM requests ORDER BY id DESC");
-                        while ($row = $query->fetch_assoc()):
-                    ?>
-                        <tr>
-                            <td><?= $row['id'] ?></td>
-                            <td><?= $row['student_name'] ?></td>
-                            <td><?= $row['visitor_name'] ?></td>
-                            <td><?= $row['status'] ?></td>
-                            <td><?= $row['date'] ?></td>
-                        </tr>
-                    <?php endwhile; ?>
+                   
                 </tbody>
             </table>
         </section>
