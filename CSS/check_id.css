@@ -1,3 +1,244 @@
+/* RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; }
+
+/* Background gradient */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #64a3f5, #1E90FF);
+  color: #121111;
+}
+
+/* Layout */
+.container { display: flex; height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #f0f4ff;
+  padding: 20px;
+  box-shadow: 3px 0 10px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo { color: #0D47A1; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+
+.profile { text-align: center; margin-bottom: 18px; width:100%; }
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    margin: 0 auto 10px;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.email { color: #0D47A1; font-size: 13px }
+
+/* Menu */
+.menu { margin-top: 18px; width:100%; display:flex; flex-direction:column; gap:12px; }
+.menu-btn {
+  width:100%; text-align:left; padding:10px; font-size:16px; background:none;
+  border:none; cursor:pointer; border-radius:8px; color:#121111;
+}
+.menu-btn:hover { background: rgba(13,71,161,0.06); }
+
+.check{
+  background-color: red;
+  color: black;
+  
+}
+
+/* Logout */
+.logout {
+  margin-top: auto; width:100%; padding:12px; border-radius:10px;
+  border:2px solid #0D47A1; background:#fff; color:#0D47A1; cursor:pointer;
+}
+.logout:hover { background:#cfe2ff; }
+
+/* Main area */
+.main {
+  flex: 1; background: #f7f9ff; margin: 20px; border-radius: 20px;
+  padding: 25px; box-shadow: 0 0 15px rgba(255,255,255,0.3); overflow:auto;
+}
+
+.title { text-align:center; color:#0D47A1; font-size:22px; margin-bottom:12px; }
+
+/* Buttons & cards */
+.status-btn {
+  display:block; margin: 10px auto 18px auto; padding: 10px 18px;
+  border-radius: 20px; border: 2px solid #0D47A1; background:#fff; color:#0D47A1;
+  cursor:pointer;
+}
+.cards { display:flex; gap:20px; justify-content:space-around; margin-top:30px; flex-wrap:wrap; }
+
+.card {
+  background:#fff; width:220px; border-radius:20px; padding:20px; text-align:center;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+}
+.icon { font-size:40px; margin-bottom:6px; }
+.card h3 { margin-top:8px; color:#0D47A1; }
+
+/* request-form area */
+.request-form {
+  display:none; margin-top:20px; background:#fff; padding:18px; border-radius:12px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.06);
+}
+
+/* form inputs */
+.request-form input, .request-form textarea, .request-form select {
+  width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #d0d7e6;
+}
+.request-form textarea { min-height:80px; resize:vertical; }
+
+/* small helper text */
+.small-msg { color:#0D47A1; margin-top:8px; font-size:13px; }
+
+/* visitor table */
+.visitor-table { width:100%; border-collapse:collapse; margin-top:12px; }
+.visitor-table th, .visitor-table td { padding:10px 8px; border-bottom:1px solid #eef3ff; text-align:left; font-size:14px; }
+.visitor-table thead th { color:#0D47A1; font-weight:700; }
+
+/* action buttons */
+.details-btn, .request-form button, .action-btn {
+  padding:8px 12px; border-radius:10px; border:none; cursor:pointer;
+}
+.details-btn { background:#0D47A1; color:#fff; margin-top:8px; }
+.request-form .save-btn { background:#0D47A1; color:#fff; }
+.request-form button#cancelRegister { background:#f0f0f0; color:#121111; }
+
+/* filter row */
+.filterRow { display:flex; gap:10px; margin-top:8px; align-items:center; }
+.filterRow input { flex:1; }
+
+/* status pills */
+.pill { padding:6px 10px; border-radius:12px; display:inline-block; color:white; font-weight:700; font-size:13px; }
+.pill.checkedin { background:#1E90FF; }
+.pill.checkedout { background:#7dbeff; }
+
+/* SETTINGS MAIN WRAPPER */
+#settings {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.08);
+    margin-top: 20px;
+}
+
+/* SETTINGS TABS */
+.settings-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.settings-tab {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: #e8e8e8;
+    color: #1b1b1b;
+    transition: 0.2s ease-in-out;
+}
+
+.settings-tab:hover {
+    background: #d1d1d1;
+}
+
+.settings-tab.active {
+    background: #0D47A1;
+    color: #fff;
+}
+
+/* TAB CONTENT */
+.settings-content {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 20px 25px;
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.06);
+}
+
+.settings-content h3 {
+    color: #0D47A1;
+    margin-bottom: 15px;
+}
+
+/* FORM STYLES */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-form label {
+    font-size: 14px;
+    color: #333;
+}
+
+.settings-form input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.settings-form input:focus {
+    border-color: #0D47A1;
+    outline: none;
+    box-shadow: 0 0 3px rgba(13, 71, 161, 0.3);
+}
+
+/* SAVE BUTTON */
+.save-btn {
+    background: #0D47A1;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    margin-top: 5px;
+}
+
+/* PROFILE PICTURE */
+.profile-picture-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-picture-box .preview-img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
+
+/* DANGER BUTTONS */
+.danger-btn {
+    background: #d9534f;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 160px;
+}
+
+.danger-btn:hover {
+    background: #b13e3b;
+}
 
 #checkIdSection {
     padding:50px;
