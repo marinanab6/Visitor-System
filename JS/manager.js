@@ -8,7 +8,50 @@ document.addEventListener("DOMContentLoaded", () => {
     const rejectedCount = document.getElementById("rejectedCount");
     const pendingCount = document.getElementById("pendingCount");
 
+
+    // Fetch counts from backend PHP
+          fetch("get_request_count.php")
+                  .then(res => res.json())
+                  .then(data => {
+                     approvedCount.textContent = data.approved;
+                     rejectedCount.textContent = data.rejected;
+                     pendingCount.textContent = data.pending;
+           })
+                .catch(err => console.error("Error fetching request counts:", err));
+
+
     const STORAGE_REQUESTS = "vms_manager_requests_v1";
+
+
+    // Fetch all requests and fill the table
+             fetch("get_requests.php")
+                      .then(res => res.json())
+                      .then(data => {
+               const tableBody = document.getElementById("requestsList");
+               tableBody.innerHTML = "";
+
+                data.forEach(req => {
+                 tableBody.innerHTML += `
+            <tr>
+                <td>${req.id}</td>
+                <td>${req.student_name ?? "Unknown"}</td>
+                <td>${req.visitor_name}</td>
+                <td>${req.status}</td>
+                <td>${req.visit_date}</td>
+            </tr>
+          `;
+      });
+
+      // Update notifications section
+      const notifySection = document.querySelector("#notifications .empty-msg");
+      if (data.length > 0) {
+          notifySection.textContent = `You have ${data.length} visit requests.`;
+      } else {
+          notifySection.textContent = "No requests available.";
+      }
+  })
+  .catch(err => console.error("Error fetching requests:", err));
+
 
     function load(key) {
         try {
