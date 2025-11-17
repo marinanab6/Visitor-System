@@ -65,12 +65,6 @@ window.addEventListener("load", () => {
     });
 });
 
-// Request submission
-document.getElementById("visitorForm").addEventListener("submit", e => {
-    e.preventDefault();
-    alert("✅ Your visitor request has been submitted!");
-    e.target.reset();
-});
 
 // SETTINGS LOGIC -------------------------------------
 
@@ -176,26 +170,9 @@ backToDashboard.addEventListener("click", () => {
     title.textContent = "Student Dashboard";
 });
 
-// SAVE STATUS WHEN STUDENT SUBMITS REQUEST ----------------------------
-document.getElementById("visitorForm").addEventListener("submit", e => {
-    e.preventDefault();
 
-    const request = {
-        name: document.getElementById("visitorName").value,
-        phone: document.getElementById("visitorPhone").value,
-        id: document.getElementById("visitorID").value,
-        date: document.getElementById("visitDate").value,
-        time: document.getElementById("visitTime").value,
-        reason: document.getElementById("visitReason").value,
-        status: "pending"   // default simulated status
-    };
 
-    localStorage.setItem("vms_student_request_status", JSON.stringify(request));
-
-    alert("✅ Your visitor request has been submitted!");
-    e.target.reset();
-});
-
+   
 
 // CHECK STATUS POPUP WITHOUT BACKEND ----------------------------
 const statusBtn2 = document.querySelector(".status-btn");

@@ -22,18 +22,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // 2️⃣ Verify password
         if (password_verify($password, $user['password'])) {
             // 3️⃣ Password is correct, set session
-            $_SESSION['user_id'] = $user['id'];
+        
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
             // 4️⃣ Redirect based on role
-            if ($user['role'] === 'admin') {
-                header("Location: ../admin.html");
-            } elseif ($user['role'] === 'manager') {
+            if ($user['role'] === 'Admin') {
+                header("Location: ../admin.html"); 
+            } elseif ($user['role'] === 'Manager') {
                 header("Location: ../manager.html");
-            } elseif ($user['role'] === 'student') {
+            } elseif ($user['role'] === 'Student_Resident') {
                 header("Location: ../student.html");
-            }elseif ($user['role'] === 'securityofficer') {
+            }elseif ($user['role'] === 'Security') {
                 header("Location: ../securityofficer.html");
             }
             exit();
