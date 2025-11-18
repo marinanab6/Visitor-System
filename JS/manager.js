@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Fetch counts from backend PHP
-          fetch("get_request_count.php")
+          fetch("PHP/get_request_count.php")
                   .then(res => res.json())
                   .then(data => {
                      approvedCount.textContent = data.approved;
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // Fetch all requests and fill the table
-             fetch("get_requests.php")
+             fetch("PHP/get_requests.php")
                       .then(res => res.json())
                       .then(data => {
                const tableBody = document.getElementById("requestsList");

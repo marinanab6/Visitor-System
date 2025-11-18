@@ -1,19 +1,26 @@
 <?php
 include 'db.php';
 
-$sql = "SELECT visit.visit_id, visit.visitor_name, visit.status, visit.visit_date, student_resident.full_name 
-        FROM visit 
-        LEFT JOIN student_resident 
-        ON visit.student_id = student_resident.resident_id
-        ORDER BY visit.visit_id DESC";
+// Fetch visit requests and student names (using username from user_account)
+$sql = "SELECT v.visit_id, v.visitor_name, v.status, v.visit_date, u.username AS student_name
+        FROM visit_table v
+        LEFT JOIN user_account u 
+        ON v.student_id = u.user_id
+        ORDER BY v.visit_id DESC";
+
+
 
 $result = $conn->query($sql);
 
 $data = [];
 
-while ($row = $result->fetch_assoc()) {
-    $data[] = $row;
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
 }
 
+// Return JSON
+header('Content-Type: application/json');
 echo json_encode($data);
 ?>
