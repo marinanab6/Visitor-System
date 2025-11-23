@@ -9,58 +9,74 @@ document.addEventListener("DOMContentLoaded", () => {
     const pendingCount = document.getElementById("pendingCount");
 
 
-    // Fetch counts from backend PHP
-          fetch("PHP/get_request_count.php")
-                  .then(res => res.json())
-                  .then(data => {
-                     approvedCount.textContent = data.approved;
-                     rejectedCount.textContent = data.rejected;
-                     pendingCount.textContent = data.pending;
-           })
-                .catch(err => console.error("Error fetching request counts:", err));
+    
+    fetch("PHP/fetch_request_count.php")
+        .then(res => res.json())
+        .then(data => {
+            approvedCount.textContent = data.approved;
+            rejectedCount.textContent = data.rejected;
+            pendingCount.textContent = data.pending;
+        })
+        .catch(err => console.error("Error fetching request counts:", err));
 
 
-    const STORAGE_REQUESTS = "vms_manager_requests_v1";
 
+    
+    function fetchRequests() {
+        fetch("PHP/fetch_request.php")
+            .then(res => res.json())
+            .then(data => {
 
-    // Fetch all requests and fill the table
-             fetch("PHP/get_requests.php")
-                      .then(res => res.json())
-                      .then(data => {
-               const tableBody = document.getElementById("requestsList");
-               tableBody.innerHTML = "";
+                
+                const tableBody = document.getElementById("requestsList");
+                tableBody.innerHTML = "";
 
                 data.forEach(req => {
-                 tableBody.innerHTML += `
-            <tr>
-                <td>${req.id}</td>
-                <td>${req.student_name ?? "Unknown"}</td>
-                <td>${req.visitor_name}</td>
-                <td>${req.status}</td>
-                <td>${req.visit_date}</td>
-            </tr>
-          `;
-      });
-
-      // Update notifications section
-      const notifySection = document.querySelector("#notifications .empty-msg");
-      if (data.length > 0) {
-          notifySection.textContent = `You have ${data.length} visit requests.`;
-      } else {
-          notifySection.textContent = "No requests available.";
-      }
-  })
-  .catch(err => console.error("Error fetching requests:", err));
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${req.visit_id}</td>
+                            <td>${req.student_name ?? "Unknown"}</td>
+                            <td>${req.visitor_name}</td>
+                            <td>${req.status}</td>
+                            <td>${req.visit_date}</td>
+                        </tr>
+                    `;
+                });
 
 
-    function load(key) {
-        try {
-            return JSON.parse(localStorage.getItem(key) || "[]");
-        } catch {
-            return [];
-        }
+
+                
+                const notifyContainer = document.getElementById("notifications");
+                notifyContainer.innerHTML = "<h2>Requests Overview</h2>";
+
+                if (data.length === 0) {
+                    notifyContainer.innerHTML += `<p class="empty-msg">No requests available.</p>`;
+                } else {
+                    data.forEach(req => {
+                        const item = document.createElement("div");
+                        item.classList.add("notif-item");
+
+                        item.innerHTML = `
+                            <p><strong>${req.visitor_name}</strong> requested to visit <strong>${req.student_name ?? "Unknown"}</strong></p>
+                            <span>Status: ${req.status}</span><br>
+                            <span>Date: ${req.visit_date}</span>
+                        `;
+
+                        notifyContainer.appendChild(item);
+                    });
+                }
+
+            })
+            .catch(err => console.error("Error fetching requests:", err));
     }
 
+    // Call function on load
+    fetchRequests();
+
+
+
+
+    
     function showSection(id) {
         sections.forEach(sec => sec.style.display = "none");
         document.getElementById(id).style.display = "block";
@@ -75,55 +91,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     detailButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-            const target = btn.dataset.target;
-            showSection(target);
+            showSection("requests");
         });
     });
 
+
+    
     const statusBtn = document.querySelector(".status-btn");
     if (statusBtn) {
-        statusBtn.addEventListener("click", () => {
-            showSection("notifications");
-        });
+        statusBtn.addEventListener("click", () => showSection("notifications"));
     }
 
+
+    
     document.querySelector(".logout").addEventListener("click", () => {
         if (confirm("Are you sure you want to logout?")) {
             window.location.href = "../login.html";
         }
     });
 
-    function updateCounters() {
-        const requests = load(STORAGE_REQUESTS);
 
-        approvedCount.textContent = requests.filter(r => r.status === "approved").length;
-        rejectedCount.textContent = requests.filter(r => r.status === "rejected").length;
-        pendingCount.textContent = requests.filter(r => r.status === "pending").length;
-    }
 
+
+    const settingsTabs = document.querySelectorAll(".settings-tab");
+    const settingsContent = document.querySelectorAll(".settings-content");
+
+    settingsTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+
+            // remove active from all
+            settingsTabs.forEach(t => t.classList.remove("active"));
+            settingsContent.forEach(c => c.style.display = "none");
+
+            // activate selected
+            tab.classList.add("active");
+            document.getElementById(tab.dataset.tab).style.display = "block";
+        });
+    });
+
+    
+
+    
     showSection("dashboard");
-    updateCounters();
-});
-/* Settings Tabs */
-const settingsTabs = document.querySelectorAll(".settings-tab");
-const settingsContent = document.querySelectorAll(".settings-content");
 
-settingsTabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-
-        // remove active from all
-        settingsTabs.forEach(t => t.classList.remove("active"));
-        settingsContent.forEach(c => c.style.display = "none");
-
-        // activate selected
-        tab.classList.add("active");
-        document.getElementById(tab.dataset.tab).style.display = "block";
-    });
-});
-detailButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const type = btn.parentElement.querySelector("p").textContent.toLowerCase().split(" ")[0];  
-        showSection("requests");
-        renderRequests(type);
-    });
 });

@@ -1,7 +1,7 @@
 /* RESET */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", sans-serif; }
 
-/* Background gradient */
+
 body {
   min-height: 100vh;
   background: linear-gradient(135deg, #64a3f5, #1E90FF);
