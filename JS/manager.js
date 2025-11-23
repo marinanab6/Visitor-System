@@ -8,33 +8,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const rejectedCount = document.getElementById("rejectedCount");
     const pendingCount = document.getElementById("pendingCount");
 
+    /* ============================
+       FETCH REQUEST COUNTS
+    ============================= */
+    function fetchCounts() {
+        fetch("PHP/fetch_request_count.php")
+            .then(res => res.json())
+            .then(data => {
+                approvedCount.textContent = data.approved;
+                rejectedCount.textContent = data.rejected;
+                pendingCount.textContent = data.pending;
+            })
+            .catch(err => console.error("Error fetching request counts:", err));
+    }
 
-    
-    fetch("PHP/fetch_request_count.php")
-        .then(res => res.json())
-        .then(data => {
-            approvedCount.textContent = data.approved;
-            rejectedCount.textContent = data.rejected;
-            pendingCount.textContent = data.pending;
-        })
-        .catch(err => console.error("Error fetching request counts:", err));
+    // Initial fetch and auto-refresh every 10 seconds
+    fetchCounts();
+    setInterval(fetchCounts, 10000);
 
-
-
-    
+    /* ============================
+       FETCH REQUEST DETAILS
+    ============================= */
     function fetchRequests() {
         fetch("PHP/fetch_request.php")
             .then(res => res.json())
             .then(data => {
-
-                
+                // Update table
                 const tableBody = document.getElementById("requestsList");
                 tableBody.innerHTML = "";
-
                 data.forEach(req => {
                     tableBody.innerHTML += `
                         <tr>
-                            <td>${req.visit_id}</td>
+                            <td>${req.log_id}</td>
                             <td>${req.student_name ?? "Unknown"}</td>
                             <td>${req.visitor_name}</td>
                             <td>${req.status}</td>
@@ -43,40 +48,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     `;
                 });
 
-
-
-                
+                // Update notifications
                 const notifyContainer = document.getElementById("notifications");
                 notifyContainer.innerHTML = "<h2>Requests Overview</h2>";
-
                 if (data.length === 0) {
                     notifyContainer.innerHTML += `<p class="empty-msg">No requests available.</p>`;
                 } else {
                     data.forEach(req => {
                         const item = document.createElement("div");
                         item.classList.add("notif-item");
-
                         item.innerHTML = `
                             <p><strong>${req.visitor_name}</strong> requested to visit <strong>${req.student_name ?? "Unknown"}</strong></p>
                             <span>Status: ${req.status}</span><br>
                             <span>Date: ${req.visit_date}</span>
                         `;
-
                         notifyContainer.appendChild(item);
                     });
                 }
-
             })
             .catch(err => console.error("Error fetching requests:", err));
     }
 
-    // Call function on load
+    // Initial fetch
     fetchRequests();
 
-
-
-
-    
+    /* ============================
+       MENU NAVIGATION
+    ============================= */
     function showSection(id) {
         sections.forEach(sec => sec.style.display = "none");
         document.getElementById(id).style.display = "block";
@@ -90,48 +88,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     detailButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            showSection("requests");
-        });
+        btn.addEventListener("click", () => showSection("requests"));
     });
 
-
-    
     const statusBtn = document.querySelector(".status-btn");
     if (statusBtn) {
         statusBtn.addEventListener("click", () => showSection("notifications"));
     }
 
-
-    
+    /* ============================
+       LOGOUT
+    ============================= */
     document.querySelector(".logout").addEventListener("click", () => {
         if (confirm("Are you sure you want to logout?")) {
             window.location.href = "../login.html";
         }
     });
 
-
-
-
+    /* ============================
+       SETTINGS TABS
+    ============================= */
     const settingsTabs = document.querySelectorAll(".settings-tab");
     const settingsContent = document.querySelectorAll(".settings-content");
 
     settingsTabs.forEach(tab => {
         tab.addEventListener("click", () => {
-
-            // remove active from all
+            // Hide all and remove active
             settingsTabs.forEach(t => t.classList.remove("active"));
             settingsContent.forEach(c => c.style.display = "none");
 
-            // activate selected
+            // Show selected
             tab.classList.add("active");
             document.getElementById(tab.dataset.tab).style.display = "block";
         });
     });
 
-    
-
-    
+    /* ============================
+       DEFAULT PAGE
+    ============================= */
     showSection("dashboard");
 
 });

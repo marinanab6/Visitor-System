@@ -2,9 +2,10 @@
 include "db.php"; 
 header("Content-Type: application/json");
 
-$sqlApproved = "SELECT COUNT(*) AS total FROM visit_requests WHERE status = 'approved'";
-$sqlRejected = "SELECT COUNT(*) AS total FROM visit_requests WHERE status = 'rejected'";
-$sqlPending  = "SELECT COUNT(*) AS total FROM visit_requests WHERE status = 'pending'";
+// Count by status from the correct table
+$sqlApproved = "SELECT COUNT(*) AS total FROM visit_log WHERE status = 'approved'";
+$sqlRejected = "SELECT COUNT(*) AS total FROM visit_log WHERE status = 'rejected'";
+$sqlPending  = "SELECT COUNT(*) AS total FROM visit_log WHERE status = 'pending'";
 
 $resultApproved = mysqli_query($conn, $sqlApproved);
 $resultRejected = mysqli_query($conn, $sqlRejected);
@@ -16,4 +17,3 @@ echo json_encode([
     "pending"  => mysqli_fetch_assoc($resultPending)["total"]
 ]);
 ?>
-
