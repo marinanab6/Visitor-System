@@ -31,7 +31,7 @@ let visitors = [];
 
 // ================================
 // ELEMENT REFERENCES
-// ================================
+
 const totalCount = document.getElementById("totalCount");
 const checkedInCount = document.getElementById("checkedInCount");
 const checkedOutCount = document.getElementById("checkedOutCount");
@@ -63,9 +63,7 @@ cancelRegister.addEventListener("click", () => {
     showSection("dashboard");
 });
 
-// ================================
-// ADD NEW VISITOR
-// ================================
+
 newVisitorForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -156,6 +154,27 @@ function updateTable() {
 
     activateCheckoutButtons();
 }
+
+document.querySelector('.menu-btn').addEventListener('click', function() {
+    let phoneNumber = prompt("Enter your phone number:");
+    const resultDiv = document.getElementById('result');
+
+    if(phoneNumber) {
+        // Simple phone number validation (digits only, length between 7 and 15)
+        const phoneRegex = /^[0-9]{7,15}$/;
+        if(phoneRegex.test(phoneNumber)) {
+            resultDiv.textContent = `✅ Your phone number ${phoneNumber} is valid.`;
+            resultDiv.style.color = 'green';
+        } else {
+            resultDiv.textContent = `❌ Invalid phone number format.`;
+            resultDiv.style.color = 'red';
+        }
+    } else {
+        resultDiv.textContent = `⚠️ No phone number entered.`;
+        resultDiv.style.color = 'orange';
+    }
+});
+
 
 // ================================
 // CHECK OUT ACTION
