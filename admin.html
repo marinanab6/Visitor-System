@@ -24,7 +24,7 @@
             <button class="menu-btn active" data-section="dashboard">📊 Dashboard</button>
             <button class="menu-btn" data-section="notifications">🔔 Notifications</button>
             <button class="menu-btn" data-section="settings">⚙️ Settings</button>
-            <button class="menu-btn" data-section="manage_users">👥 Manage Users</button>
+            
             
         </div>
 
@@ -161,6 +161,14 @@
                 <h3>Account Actions</h3>
                 <button class="danger-btn">Disable Account</button>
                 <button class="danger-btn">Delete Account</button>
+
+         <div id="deleteOptions" style="display:none; margin-top:15px;">
+        <p>Select account type to delete:</p>
+        <button class="delete-role-btn" data-role="manager">Manager</button>
+        <button class="delete-role-btn" data-role="student">Student</button>
+        <button class="delete-role-btn" data-role="security">Security Officer</button>
+    </div>
+</div>
             </div>
 
         </section>

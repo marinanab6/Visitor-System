@@ -57,6 +57,33 @@ tabs.forEach(tab => {
         document.getElementById(target).style.display = "block";
     });
 });
+// Show delete options when clicking "Delete Account"
+const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+const deleteOptions = document.getElementById("deleteOptions");
+
+if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", () => {
+        deleteOptions.style.display = deleteOptions.style.display === "none" ? "block" : "none";
+    });
+}
+
+// Handle clicking a role button
+const deleteRoleBtns = document.querySelectorAll(".delete-role-btn");
+deleteRoleBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const role = btn.dataset.role;
+
+        if (confirm(`Are you sure you want to delete all ${role} accounts? This cannot be undone!`)) {
+            // Send request to PHP to delete the selected accounts
+            fetch(`PHP/delete_accounts.php?role=${role}`, { method: "POST" })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(err => console.error("Error deleting accounts:", err));
+        }
+    });
+});
 
 
 // --- LOGOUT ---
