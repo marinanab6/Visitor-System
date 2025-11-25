@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Refresh counts every 10 seconds
     fetchCounts();
-    setInterval(fetchCounts, 10000);
+    // setInterval(fetchCounts, 10000);
 
     // ====== FETCH REQUEST DETAILS ======
     function fetchRequests() {
@@ -34,18 +34,21 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 // ===== Update requests table =====
-                if (requestsList) {
+                if (data && requestsList) {
+                    $count = 1;
                     requestsList.innerHTML = "";
                     data.forEach(req => {
                         requestsList.innerHTML += `
                             <tr>
-                                <td>${req.log_id}</td>
-                                <td>${req.student_name ?? "Unknown"}</td>
+                                <td>${$count}</td>
+                                <td>${req.student_id}</td>
                                 <td>${req.visitor_name}</td>
+                                <td>${req.visitor_phone}</td>
                                 <td>${req.status}</td>
                                 <td>${req.visit_date}</td>
                             </tr>
                         `;
+                        $count++;
                     });
                 }
 
@@ -78,8 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Initial fetch and refresh every 10 seconds
-    fetchRequests();
-    setInterval(fetchRequests, 10000);
+    // fetchRequests();
+    // setInterval(fetchRequests, 10000);
 
     // ====== MENU NAVIGATION ======
     function showSection(id) {
@@ -95,7 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     detailButtons.forEach(btn => {
-        btn.addEventListener("click", () => showSection("requests"));
+        btn.addEventListener("click", () => {
+            fetchRequests()
+            showSection("requests")
+        });
     });
 
     const statusBtn = document.querySelector(".status-btn");

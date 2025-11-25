@@ -87,9 +87,10 @@
     <table class="requests-table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Count</th>
                 <th>Student</th>
                 <th>Visitor</th>
+                <th>Phone</th>
                 <th>Status</th>
                 <th>Date</th>
             </tr>
