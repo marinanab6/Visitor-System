@@ -27,13 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['role'] = $user['role'];
 
             // 4️⃣ Redirect based on role
-            if ($user['role'] === 'Admin') {
+            if ($user['role'] === 'admin') {
                 header("Location: ../admin.html"); 
-            } elseif ($user['role'] === 'Manager') {
+            } elseif ($user['role'] === 'manager') {
                 header("Location: ../manager.html");
-            } elseif ($user['role'] === 'Student_Resident') {
+            } elseif ($user['role'] === 'student') {
                 header("Location: ../student.html");
-            }elseif ($user['role'] === 'Security') {
+            }elseif ($user['role'] === 'security') {
                 header("Location: ../securityofficer.html");
             }
             exit();

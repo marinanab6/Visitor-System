@@ -3,7 +3,7 @@ session_start();
 include "db.php";
 
 // Make sure user is logged in
-if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Student_Resident') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'student') {
     die("Error: Student not logged in.");
 }
 
@@ -52,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 3. Insert the request
     $stmt = $conn->prepare("
         INSERT INTO visit_table 
-        (visitor_name, visitor_phone, visitor_id, visit_date, visit_time, visit_reason, student_id, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+        (visitor_name, visitor_phone, visitor_id, visit_date, visit_time, visit_reason, student_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->bind_param(

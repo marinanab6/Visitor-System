@@ -24,18 +24,16 @@ $response = [];
 // ";
 
 $sql = "SELECT 
-        `visit_id`, 
-        `visitor_name`, 
-        `visitor_phone`, 
-        `visitor_id`, 
-        `visitor_photo`, 
-        `visit_date`, 
-        `visit_time`, 
-        `visit_reason`, 
-        `student_id`, 
-        `created_at`, 
-        `status` 
-    FROM `visit_table`";
+            sr.user_id AS student_id,
+            ua.full_name AS student_name,
+            v.full_name AS visitor_name,
+            v.phone_number AS visitor_phone,
+            vt.status,
+            vt.visit_date
+        FROM visit_table vt
+        JOIN visitor v ON vt.visitor_id = v.visitor_id
+        JOIN student_resident sr ON vt.student_id = sr.student_id
+        JOIN user_account ua ON sr.user_id = ua.user_id;";
 
 $result = $conn->query($sql);
 

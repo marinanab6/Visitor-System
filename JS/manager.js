@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         requestsList.innerHTML += `
                             <tr>
                                 <td>${$count}</td>
-                                <td>${req.student_id}</td>
+                                <td>${req.student_name}</td>
                                 <td>${req.visitor_name}</td>
                                 <td>${req.visitor_phone}</td>
                                 <td>${req.status}</td>
