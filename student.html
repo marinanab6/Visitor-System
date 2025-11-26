@@ -75,6 +75,7 @@
             <input type="number" id="visitorID" name="visitorID" placeholder="Enter ID number" required>
             <input type="date" id="visitDate" name="visitDate" placeholder="Enter visit date" required>
             <input type="time" id="visitTime" name="visitTime" required>
+            <input type="email" id="visitorEmail" name="visitorEmail" placeholder="Enter visitor email">
             <textarea id="visitReason" name="visitReason" placeholder="State your purpose" required></textarea>
 
             <label for="visitorPhoto"><b>Upload Visitor Photo:</b></label>
@@ -90,10 +91,14 @@
 
 
         <!-- NOTIFICATIONS -->
-        <section id="notificationsSection" style="display:none;">
-            <h2>Notifications</h2>
-            <p>No new notifications.</p>
-        </section>
+        <section id="notificationsSection" class="section" style="display:none;">
+    <h2>Notifications</h2>
+
+    <div id="studentNotifications" class="notifications-box">
+        <!-- Notifications will be loaded here by student.js -->
+    </div>
+</section>
+
 
         <!-- SETTINGS SECTION -->
         <section id="settingsSection" class="section" style="display:none;">
@@ -179,7 +184,7 @@
     <button id="backToDashboard" class="details-back">← Back</button>
     <h2 id="detailsTitle">Details</h2>
     <div id="detailsContent" class="details-content">
-        <!-- JS will fill content here -->
+        
     </div>
 </div>
 

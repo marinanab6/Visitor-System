@@ -16,7 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc(); // fetch the user record
-
+        echo 'user password from db: ' . $user['password'];
+        echo 'input password: ' . $password;
+        echo 'hashed password: ' . password_hash($password, PASSWORD_DEFAULT);
         $_SESSION['student_full_name'] = $user['full_name'];
 
         // 2️⃣ Verify password
@@ -30,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($user['role'] === 'admin') {
                 header("Location: ../admin.html"); 
             } elseif ($user['role'] === 'manager') {
-                header("Location: ../manager.html");
+                header("Location: ../manager.php");
             } elseif ($user['role'] === 'student') {
                 header("Location: ../student.html");
             }elseif ($user['role'] === 'security') {

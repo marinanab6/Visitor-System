@@ -69,10 +69,15 @@
 
 
         <!-- NOTIFICATIONS SECTION -->
-        <section id="notifications" class="section" >
-            <h2>Requests Overview</h2>
-            <p class="empty-msg">No requests available.</p>
-        </section>
+        <div id="notifications"></div> <!-- container for notifications list -->
+
+<section id="detailsSection" style="display:none;">
+    <button id="backToDashboard">← Back</button>
+    <div id="detailsContent"></div> <!-- details injected here -->
+</section>
+
+<table id="requestsList"></table> <!-- table for all requests if used -->
+
 
         <!-- REQUESTS SECTION -->
 <section id="requests" class="section" >
