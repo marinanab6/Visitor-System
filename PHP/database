@@ -1,0 +1,581 @@
+-- Drop and create database
+DROP DATABASE IF EXISTS `visitor-hostel-system`;
+
+CREATE DATABASE IF NOT EXISTS `visitor-hostel-system` DEFAULT CHARACTER
+SET
+    utf8mb4 COLLATE utf8mb4_general_ci;
+
+USE `visitor-hostel-system`;
+
+-- ========================================
+-- Table: user_account
+-- ========================================
+DROP TABLE IF EXISTS `user_account`;
+
+CREATE TABLE
+    `user_account` (
+        `user_id` int (11) NOT NULL AUTO_INCREMENT,
+        `full_name` varchar(100) DEFAULT NULL,
+        `username` varchar(50) DEFAULT NULL,
+        `password` varchar(255) DEFAULT NULL,
+        `email` varchar(50) DEFAULT NULL,
+        `phone_number` varchar(15) DEFAULT NULL,
+        `role` enum ('student', 'admin', 'security', 'manager') NOT NULL DEFAULT 'student',
+        PRIMARY KEY (`user_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO
+    `user_account` (
+        `full_name`,
+        `username`,
+        `password`,
+        `email`,
+        `phone_number`,
+        `role`
+    )
+VALUES
+    (
+        'Boss',
+        'BB',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'b.oss@gmail.com',
+        '07111111111',
+        'student'
+    ),
+    (
+        'John Smith',
+        'jsmith',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'john.smith@student.edu',
+        '07123456789',
+        'student'
+    ),
+    (
+        'Emma Wilson',
+        'ewilson',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'emma.wilson@student.edu',
+        '07234567890',
+        'student'
+    ),
+    (
+        'Michael Brown',
+        'mbrown',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'michael.b@student.edu',
+        '07345678901',
+        'student'
+    ),
+    (
+        'Sarah Johnson',
+        'sjohnson',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'sarah.j@student.edu',
+        '07456789012',
+        'security'
+    ),
+    (
+        'David Lee',
+        'dlee',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'david.lee@student.edu',
+        '07567890123',
+        'student'
+    ),
+    (
+        'Dr. Robert Davis',
+        'rdavis',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'r.davis@school.edu',
+        '07678901234',
+        'student'
+    ),
+    (
+        'Prof. Lisa Chen',
+        'lchen',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'l.chen@school.edu',
+        '07789012345',
+        'student'
+    ),
+    (
+        'Mr. James Wilson',
+        'jwilson',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'j.wilson@school.edu',
+        '07890123456',
+        'student'
+    ),
+    (
+        'Security User',
+        'SecurityUser',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'SecurityUser@school.edu',
+        '07901234567',
+        'security'
+    ),
+    (
+        'Mr Man',
+        'MrManSec',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'mrsansec@school.edu',
+        '07912345678',
+        'security'
+    ),
+    (
+        'Olivia Martinez',
+        'omartinez',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'olivia.m@student.edu',
+        '07923456789',
+        'student'
+    ),
+    (
+        'Daniel Taylor',
+        'dtaylor',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'daniel.t@student.edu',
+        '07934567890',
+        'student'
+    ),
+    (
+        'Sophia Anderson',
+        'sanderson',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'sophia.a@student.edu',
+        '07945678901',
+        'student'
+    ),
+    (
+        'William Thomas',
+        'wthomas',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'william.t@student.edu',
+        '07956789012',
+        'student'
+    ),
+    (
+        'Dr. Maria Garcia',
+        'mgarcia',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'm.garcia@school.edu',
+        '07967890123',
+        'admin'
+    ),
+    (
+        'Mr. Kevin White',
+        'kwhite',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'k.white@school.edu',
+        '07978901234',
+        'admin'
+    ),
+    (
+        'Support Manager',
+        'support',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'support@school.edu',
+        '07989012345',
+        'manager'
+    ),
+    (
+        'IT Helpdesk',
+        'ithelp',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'ithelp@school.edu',
+        '07990123456',
+        'manager'
+    ),
+    (
+        'Jennifer Lopez',
+        'jlopez',
+        "$2y$10$6ogMLfky79FCLYbx3jNEH.KIJEQrUi/3Kfp3K02VMLvwkolC86k02",
+        'jennifer.l@student.edu',
+        '07901234567',
+        'student'
+    );
+
+-- ========================================
+-- Table: student_resident
+-- ========================================
+DROP TABLE IF EXISTS `student_resident`;
+
+CREATE TABLE
+    `student_resident` (
+        `student_id` int (11) NOT NULL AUTO_INCREMENT,
+        `user_id` int (11) DEFAULT NULL,
+        `room_number` varchar(5) DEFAULT NULL,
+        PRIMARY KEY (`student_id`),
+        KEY `user_id` (`user_id`),
+        CONSTRAINT `student_resident_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`user_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO
+    `student_resident` (`user_id`, `room_number`)
+VALUES
+    (1, 'RM01'),
+    (2, 'RM02'),
+    (3, 'RM03'),
+    (4, 'RM04'),
+    (6, 'RM05'),
+    (7, 'RM06'),
+    (8, 'RM07'),
+    (9, 'RM08'),
+    (12, 'RM09'),
+    (13, 'RM10'),
+    (14, 'RM11'),
+    (15, 'RM12'),
+    (20, 'RM13'),
+    (3, 'RM14'),
+    (4, 'RM15');
+
+-- ========================================
+-- Table: security_officer
+-- ========================================
+DROP TABLE IF EXISTS `security_officer`;
+
+CREATE TABLE
+    `security_officer` (
+        `officer_id` int (11) NOT NULL AUTO_INCREMENT,
+        `user_id` int (11) DEFAULT NULL,
+        `shift_time` datetime NOT NULL DEFAULT current_timestamp(),
+        PRIMARY KEY (`officer_id`),
+        KEY `user_id` (`user_id`),
+        CONSTRAINT `security_officer_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user_account` (`user_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO
+    `security_officer` (`user_id`, `shift_time`)
+VALUES
+    (5, '2025-11-25 03:34:49'),
+    (10, '2025-11-25 03:34:49'),
+    (11, '2025-11-25 03:34:49'),
+    (5, '2025-11-25 04:00:00'),
+    (10, '2025-11-25 04:30:00'),
+    (11, '2025-11-25 05:00:00'),
+    (5, '2025-11-25 06:00:00'),
+    (10, '2025-11-25 06:30:00'),
+    (11, '2025-11-25 07:00:00'),
+    (5, '2025-11-25 08:00:00'),
+    (10, '2025-11-25 08:30:00'),
+    (11, '2025-11-25 09:00:00'),
+    (5, '2025-11-25 09:30:00'),
+    (10, '2025-11-25 10:00:00'),
+    (11, '2025-11-25 10:30:00');
+
+-- ========================================
+-- Table: visitor
+-- ========================================
+DROP TABLE IF EXISTS `visitor`;
+
+CREATE TABLE
+    `visitor` (
+        `visitor_id` int (11) NOT NULL AUTO_INCREMENT,
+        `student_resident_id` int (11) DEFAULT NULL,
+        `full_name` varchar(100) DEFAULT NULL,
+        `phone_number` varchar(15) DEFAULT NULL,
+        `email` varchar(100) DEFAULT NULL,
+        `id_number` varchar(20) DEFAULT NULL,
+        `visitor_photo` varchar(255) DEFAULT NULL,
+        PRIMARY KEY (`visitor_id`),
+        KEY `student_resident_id` (`student_resident_id`),
+        CONSTRAINT `visitor_ibfk_1` FOREIGN KEY (`student_resident_id`) REFERENCES `student_resident` (`student_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO
+    `visitor` (
+        `student_resident_id`,
+        `full_name`,
+        `phone_number`,
+        `email`,
+        `id_number`
+    )
+VALUES
+    (
+        1,
+        'Brother Visitor',
+        '07456789012',
+        'bv@example.com',
+        '123456'
+    ),
+    (
+        2,
+        'Alice Visitor',
+        '07456789013',
+        'alice@example.com',
+        '123457'
+    ),
+    (
+        3,
+        'Bob Visitor',
+        '07456789014',
+        'bob@example.com',
+        '123458'
+    ),
+    (
+        4,
+        'Charlie Visitor',
+        '07456789015',
+        'charlie@example.com',
+        '123459'
+    ),
+    (
+        5,
+        'David Visitor',
+        '07456789016',
+        'david@example.com',
+        '123460'
+    ),
+    (
+        6,
+        'Eve Visitor',
+        '07456789017',
+        'eve@example.com',
+        '123461'
+    ),
+    (
+        7,
+        'Frank Visitor',
+        '07456789018',
+        'frank@example.com',
+        '123462'
+    ),
+    (
+        8,
+        'Grace Visitor',
+        '07456789019',
+        'grace@example.com',
+        '123463'
+    ),
+    (
+        9,
+        'Hannah Visitor',
+        '07456789020',
+        'hannah@example.com',
+        '123464'
+    ),
+    (
+        10,
+        'Ian Visitor',
+        '07456789021',
+        'ian@example.com',
+        '123465'
+    ),
+    (
+        11,
+        'Jack Visitor',
+        '07456789022',
+        'jack@example.com',
+        '123466'
+    ),
+    (
+        12,
+        'Kelly Visitor',
+        '07456789023',
+        'kelly@example.com',
+        '123467'
+    ),
+    (
+        13,
+        'Liam Visitor',
+        '07456789024',
+        'liam@example.com',
+        '123468'
+    ),
+    (
+        14,
+        'Mia Visitor',
+        '07456789025',
+        'mia@example.com',
+        '123469'
+    ),
+    (
+        15,
+        'Noah Visitor',
+        '07456789026',
+        'noah@example.com',
+        '123470'
+    );
+
+-- ========================================
+-- Table: visit_table
+-- ========================================
+DROP TABLE IF EXISTS `visit_table`;
+
+CREATE TABLE
+    `visit_table` (
+        `visit_id` int (11) NOT NULL AUTO_INCREMENT,
+        `visitor_id` int (11) NOT NULL,
+        `visit_date` date NOT NULL,
+        `visit_time` time NOT NULL,
+        `visit_reason` text NOT NULL,
+        `student_id` int (11) NOT NULL,
+        `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+        `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+        `status` enum ('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
+        PRIMARY KEY (`visit_id`),
+        KEY `visitor_id` (`visitor_id`),
+        KEY `student_id` (`student_id`),
+        CONSTRAINT `visit_table_ibfk_1` FOREIGN KEY (`visitor_id`) REFERENCES `visitor` (`visitor_id`),
+        CONSTRAINT `visit_table_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `student_resident` (`student_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO
+    `visit_table` (
+        `visitor_id`,
+        `visit_date`,
+        `visit_time`,
+        `visit_reason`,
+        `student_id`
+    )
+VALUES
+    (1, '2025-11-11', '03:39:46', 'visit brotha', 1),
+    (2, '2025-11-12', '10:00:00', 'discussion', 2),
+    (3, '2025-11-12', '11:00:00', 'delivery', 3),
+    (4, '2025-11-13', '12:30:00', 'meeting', 4),
+    (5, '2025-11-14', '13:45:00', 'check-in', 5),
+    (6, '2025-11-15', '14:00:00', 'visit', 6),
+    (7, '2025-11-16', '15:30:00', 'discussion', 7),
+    (8, '2025-11-17', '16:15:00', 'delivery', 8),
+    (9, '2025-11-18', '17:45:00', 'meeting', 9),
+    (10, '2025-11-19', '09:30:00', 'check-in', 10),
+    (11, '2025-11-20', '10:45:00', 'visit', 11),
+    (12, '2025-11-21', '11:15:00', 'discussion', 12),
+    (13, '2025-11-22', '12:00:00', 'delivery', 13),
+    (14, '2025-11-23', '13:30:00', 'meeting', 14),
+    (15, '2025-11-24', '14:45:00', 'check-in', 15);
+
+-- ========================================
+-- Table: visit_log
+-- ========================================
+DROP TABLE IF EXISTS `visit_log`;
+
+CREATE TABLE
+    `visit_log` (
+        `log_id` int (11) NOT NULL AUTO_INCREMENT,
+        `visit_id` int (11) DEFAULT NULL,
+        `officer_id` int (11) DEFAULT NULL,
+        `check_in` datetime DEFAULT NULL,
+        `check_out` datetime DEFAULT NULL,
+        `status` varchar(20) DEFAULT 'pending',
+        PRIMARY KEY (`log_id`),
+        KEY `visit_id` (`visit_id`),
+        KEY `officer_id` (`officer_id`),
+        CONSTRAINT `visit_log_ibfk_1` FOREIGN KEY (`visit_id`) REFERENCES `visit_table` (`visit_id`),
+        CONSTRAINT `visit_log_ibfk_2` FOREIGN KEY (`officer_id`) REFERENCES `security_officer` (`officer_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO
+    `visit_log` (
+        `visit_id`,
+        `officer_id`,
+        `check_in`,
+        `check_out`,
+        `status`
+    )
+VALUES
+    (
+        1,
+        1,
+        '2025-11-11 03:40:00',
+        '2025-11-11 05:00:00',
+        'approved'
+    ),
+    (
+        2,
+        2,
+        '2025-11-12 10:05:00',
+        '2025-11-12 11:30:00',
+        'approved'
+    ),
+    (
+        3,
+        3,
+        '2025-11-12 11:10:00',
+        '2025-11-12 12:00:00',
+        'rejected'
+    ),
+    (
+        4,
+        1,
+        '2025-11-13 12:35:00',
+        '2025-11-13 14:00:00',
+        'approved'
+    ),
+    (
+        5,
+        2,
+        '2025-11-14 13:50:00',
+        '2025-11-14 15:00:00',
+        'approved'
+    ),
+    (
+        6,
+        3,
+        '2025-11-15 14:05:00',
+        '2025-11-15 15:30:00',
+        'approved'
+    ),
+    (
+        7,
+        1,
+        '2025-11-16 15:35:00',
+        '2025-11-16 16:30:00',
+        'approved'
+    ),
+    (
+        8,
+        2,
+        '2025-11-17 16:20:00',
+        '2025-11-17 17:15:00',
+        'rejected'
+    ),
+    (
+        9,
+        3,
+        '2025-11-18 17:50:00',
+        '2025-11-18 19:00:00',
+        'approved'
+    ),
+    (
+        10,
+        1,
+        '2025-11-19 09:35:00',
+        '2025-11-19 10:45:00',
+        'approved'
+    ),
+    (
+        11,
+        2,
+        '2025-11-20 10:50:00',
+        '2025-11-20 12:00:00',
+        'approved'
+    ),
+    (
+        12,
+        3,
+        '2025-11-21 11:20:00',
+        '2025-11-21 12:30:00',
+        'approved'
+    ),
+    (
+        13,
+        1,
+        '2025-11-22 12:05:00',
+        '2025-11-22 13:00:00',
+        'rejected'
+    ),
+    (
+        14,
+        2,
+        '2025-11-23 13:35:00',
+        '2025-11-23 14:30:00',
+        'approved'
+    ),
+    (
+        15,
+        3,
+        '2025-11-24 14:50:00',
+        '2025-11-24 16:00:00',
+        'approved'
+    );

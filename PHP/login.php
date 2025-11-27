@@ -7,8 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // 1️⃣ Select user by username only
-    $query = "SELECT * FROM user_account WHERE username = ? ";
+    // Select user by username
+    $query = "SELECT * FROM user_account WHERE username = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $username);
     $stmt->execute();
@@ -16,26 +16,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc(); // fetch the user record
-        echo 'user password from db: ' . $user['password'];
-        echo 'input password: ' . $password;
-        echo 'hashed password: ' . password_hash($password, PASSWORD_DEFAULT);
-        $_SESSION['student_full_name'] = $user['full_name'];
 
-        // 2️⃣ Verify password
+        // Verify password
         if (password_verify($password, $user['password'])) {
-            // 3️⃣ Password is correct, set session
-        
+
+            // ✅ Password correct, set sessions
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
+            
+            if ($user['role'] === 'student') {
+                $_SESSION['student_id'] = $user['id']; // important for dashboard
+                $_SESSION['student_full_name'] = $user['full_name'];
+            }
 
-            // 4️⃣ Redirect based on role
+            // Redirect based on role
             if ($user['role'] === 'admin') {
                 header("Location: ../admin.html"); 
             } elseif ($user['role'] === 'manager') {
                 header("Location: ../manager.php");
             } elseif ($user['role'] === 'student') {
                 header("Location: ../student.html");
-            }elseif ($user['role'] === 'security') {
+            } elseif ($user['role'] === 'security') {
                 header("Location: ../securityofficer.html");
             }
             exit();

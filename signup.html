@@ -6,17 +6,12 @@
     <title>Signup - Visitor Management System</title>
     <link rel="stylesheet" href="CSS/signup.css">
 </head>
-
 <body>
 
-<!-- SIGN-UP FORM -->
-    <!-- <form id="signupForm" method="POST" action="PHP/signup.php">
+<div class="signup-container" id="signupContainer">
+    <h2>Create an Account</h2>
 
-
-        <div class="input-group">
-            <label for="id">ID or PASSPORT</label>
-            <input type="text" id="signupId" name="id" placeholder="Enter your ID or passport number" required>
-        </div>
+    <form id="signupForm" method="POST" action="PHP/signup.php">
 
         <div class="input-group">
             <label for="signupFullName">Full Name</label>
@@ -37,18 +32,30 @@
             <label for="signupPassword">Password</label>
             <input type="password" id="signupPassword" name="password" placeholder="Create a password" required>
             <p class="password-error" id="signupPassError"></p>
-            <small class="hint">Password must be at least 6 characters</small>
         </div>
 
         <div class="input-group">
             <label for="signupRole">Select Role</label>
-            <select id="signupRole"  name="role" required>
+            <select id="signupRole" name="role" required>
                 <option value="">--Select Role--</option>
-                <option value="Student_Resident">Student Resident</option>
-                <option value="Manager">Hostel Manager</option>
-                <option value="Security">Security Officer</option>
-                <option value="Admin">Admin</option>
+                <option value="student">Student Resident</option>
+                <option value="manager">Hostel Manager</option>
+                <option value="security">Security Officer</option>
+                <option value="admin">Admin</option>
             </select>
+        </div>
+
+        <!-- Student extra fields (hidden by default) -->
+        <div id="studentFields" style="display: none;">
+            <div class="input-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" name="student_id" placeholder="Enter student ID">
+            </div>
+
+            <div class="input-group">
+                <label for="roomNumber">Room Number</label>
+                <input type="text" id="roomNumber" name="room_number" placeholder="Enter room number">
+            </div>
         </div>
 
         <button type="submit">Sign Up</button>
@@ -57,56 +64,24 @@
         <p class="switch-form">Already have an account?
             <a href="login.html" id="showLogin">Login</a>
         </p>
-    </form> -->
+    </form>
+</div>    
 
-    <div class="signup-container" id="signupContainer">
-        <h2>Create an Account</h2>
-    
-        <form id="signupForm" method="POST" action="PHP/signup.php">
-    
-            <div class="input-group">
-                <label for="signupFullName">Full Name</label>
-                <input type="text" id="signupFullName" name="full_name" placeholder="Enter your full name" required>
-            </div>
-    
-            <div class="input-group">
-                <label for="signupEmail">Email</label>
-                <input type="email" id="signupEmail" name="email" placeholder="Enter your email" required>
-            </div>
-    
-            <div class="input-group">
-                <label for="signupUsername">Username</label>
-                <input type="text" id="signupUsername" name="username" placeholder="Choose a username" required>
-            </div>
-    
-            <div class="input-group">
-                <label for="signupPassword">Password</label>
-                <input type="password" id="signupPassword" name="password" placeholder="Create a password" required>
-                <p class="password-error" id="signupPassError"></p>
-                <small class="hint">Password must be at least 6 characters</small>
-            </div>
-    
-            <div class="input-group">
-                <label for="signupRole">Select Role</label>
-                <select id="signupRole" name="role" required>
-                    <option value="">--Select Role--</option>
-                    <option value="student">Student Resident</option>
-                    <option value="manager">Hostel Manager</option>
-                    <option value="security">Security Officer</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-    
-            <button type="submit">Sign Up</button>
-            <p id="signupMessage"></p>
-    
-            <p class="switch-form">Already have an account?
-                <a href="login.html" id="showLogin">Login</a>
-            </p>
-        </form>
-    </div>    
+<script>
+    // Show/hide student fields
+    const signupRole = document.getElementById("signupRole");
+    const studentFields = document.getElementById("studentFields");
 
-</div>
+    if (signupRole && studentFields) {
+        signupRole.addEventListener("change", () => {
+            if (signupRole.value === "student") {
+                studentFields.style.display = "block";
+            } else {
+                studentFields.style.display = "none";
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

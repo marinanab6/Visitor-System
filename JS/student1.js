@@ -1,3 +1,7 @@
+// ================================
+// STUDENT DASHBOARD JS
+// ================================
+
 // Sidebar highlight
 const menuItems = document.querySelectorAll(".menu-btn");
 menuItems.forEach(item => {
@@ -8,33 +12,37 @@ menuItems.forEach(item => {
 });
 
 // Page sections
-const dashboard = document.querySelector(".cards");
+const dashboardSection = document.getElementById("dashboardSection");
 const statusBtn = document.querySelector(".status-btn");
-const title = document.querySelector(".title");
 const requestForm = document.getElementById("requestForm");
 const notificationsSection = document.getElementById("notificationsSection");
 const settingsSection = document.getElementById("settingsSection");
 const detailsSection = document.getElementById("detailsSection");
+const title = document.querySelector(".title");
 
-// Hide all sections
+// Hide all sections except dashboard
 function hideAllSections() {
-    dashboard.style.display = "none";
-    statusBtn.style.display = "none";
+    dashboardSection.style.display = "none";
     requestForm.style.display = "none";
     notificationsSection.style.display = "none";
     settingsSection.style.display = "none";
     detailsSection.style.display = "none";
+    statusBtn.style.display = "none";
 }
 
-// Dashboard button (fixed)
+// ================================
+// SIDEBAR BUTTONS
+// ================================
+
+// Dashboard
 document.getElementById("btnDashboard").addEventListener("click", () => {
     hideAllSections();
     title.textContent = "Student Dashboard";
-    dashboard.style.display = "flex";
+    dashboardSection.style.display = "flex";
     statusBtn.style.display = "inline-block";
 });
 
-// New request
+// New Request
 document.getElementById("btnNewRequest").addEventListener("click", () => {
     hideAllSections();
     title.textContent = "New Visitor Request";
@@ -55,7 +63,9 @@ document.getElementById("btnSettings").addEventListener("click", () => {
     settingsSection.style.display = "block";
 });
 
-// Cards animation
+// ================================
+// DASHBOARD CARDS ANIMATION
+// ================================
 window.addEventListener("load", () => {
     document.querySelectorAll(".card").forEach((card, i) => {
         setTimeout(() => {
@@ -65,10 +75,9 @@ window.addEventListener("load", () => {
     });
 });
 
-
-// SETTINGS LOGIC -------------------------------------
-
-// Tab switching
+// ================================
+// SETTINGS TABS
+// ================================
 const settingsTabs = document.querySelectorAll(".settings-tab");
 const settingsContent = document.querySelectorAll(".settings-content");
 
@@ -107,19 +116,9 @@ document.getElementById("updatePasswordBtn").addEventListener("click", () => {
 // Profile picture preview
 const imageInput = document.getElementById("imageInput");
 const previewImage = document.getElementById("previewImage");
-
 imageInput.addEventListener("change", () => {
     const file = imageInput.files[0];
     if (file) previewImage.src = URL.createObjectURL(file);
-});
-
-// Account actions
-document.getElementById("disableAcc").addEventListener("click", () => {
-    alert("⚠️ This will disable your account.");
-});
-
-document.getElementById("deleteAcc").addEventListener("click", () => {
-    alert("❌ This will permanently delete your account.");
 });
 
 // Logout
@@ -127,9 +126,9 @@ document.querySelector(".logout").addEventListener("click", () => {
     window.location.href = "login.html";
 });
 
-
-// VIEW DETAILS INTO NEW SECTION -------------------------------------
-
+// ================================
+// DETAILS SECTION
+// ================================
 const detailBtns = document.querySelectorAll(".details-btn");
 const detailsTitle = document.getElementById("detailsTitle");
 const detailsContent = document.getElementById("detailsContent");
@@ -137,9 +136,8 @@ const backToDashboard = document.getElementById("backToDashboard");
 
 detailBtns.forEach(btn => {
     btn.addEventListener("click", () => {
-
-        hideAllSections();   // hide dashboard + everything
-        detailsSection.style.display = "block";  // show details section
+        hideAllSections();
+        detailsSection.style.display = "block";
 
         const card = btn.closest(".card");
         const cardTitle = card.querySelector("h3").textContent;
@@ -147,14 +145,11 @@ detailBtns.forEach(btn => {
 
         title.textContent = cardTitle;
         detailsTitle.textContent = cardTitle;
-
         detailsContent.innerHTML = `
-            <div style="font-size: 50px; text-align:center">${cardIcon}</div>
-
-            <p style="margin-top: 15px; text-align:center;">
+            <div style="font-size:50px;text-align:center">${cardIcon}</div>
+            <p style="margin-top:15px;text-align:center;">
                 Detailed analytics for <strong>${cardTitle}</strong>.
             </p>
-
             <p style="margin-top:10px;">
                 You can put logs, charts, tables and backend data here.
             </p>
@@ -162,25 +157,21 @@ detailBtns.forEach(btn => {
     });
 });
 
-// Back from details to dashboard
 backToDashboard.addEventListener("click", () => {
     hideAllSections();
-    dashboard.style.display = "flex";
+    dashboardSection.style.display = "flex";
     statusBtn.style.display = "inline-block";
     title.textContent = "Student Dashboard";
 });
 
-
-
-   
-
-// CHECK STATUS POPUP WITHOUT BACKEND ----------------------------
-const statusBtn2 = document.querySelector(".status-btn");
+// ================================
+// STATUS POPUP
+// ================================
 const statusPopup = document.getElementById("statusPopup");
 const statusMessage = document.getElementById("statusMessage");
 const closeStatus = document.getElementById("closeStatus");
 
-statusBtn2.addEventListener("click", () => {
+statusBtn.addEventListener("click", () => {
     statusPopup.style.display = "flex";
     statusMessage.textContent = "Checking...";
 
@@ -196,12 +187,10 @@ statusBtn2.addEventListener("click", () => {
         if (saved.status === "approved") {
             statusMessage.textContent = "✅ Your request has been approved!";
             statusMessage.style.color = "green";
-        }
-        else if (saved.status === "rejected") {
+        } else if (saved.status === "rejected") {
             statusMessage.textContent = "❌ Your request was rejected.";
             statusMessage.style.color = "red";
-        }
-        else {
+        } else {
             statusMessage.textContent = "⏳ Your request is still pending.";
             statusMessage.style.color = "#c7a600";
         }
@@ -212,29 +201,24 @@ closeStatus.addEventListener("click", () => {
     statusPopup.style.display = "none";
 });
 
-// Function to update the dashboard cards
+// ================================
+// DASHBOARD DATA FETCH
+// ================================
 function updateDashboard() {
-    fetch('PHP/student_dash.php') // Call the PHP backend
-        .then(response => response.json())
+    fetch('PHP/student_dash.php')
+        .then(res => res.json())
         .then(data => {
             if (data.error) {
                 console.error(data.error);
                 return;
             }
-
-            const cards = document.querySelectorAll('.card');
-
-            // Update each card with data from PHP
+            const cards = dashboardSection.querySelectorAll('.card');
             cards[0].querySelector('h3').innerText = `Requests Denied: ${data.denied}`;
             cards[1].querySelector('h3').innerText = `Requests Accepted: ${data.accepted}`;
             cards[2].querySelector('h3').innerText = `Total Reports: ${data.total}`;
         })
-        .catch(error => console.error('Error fetching dashboard data:', error));
+        .catch(err => console.error('Error fetching dashboard data:', err));
 }
 
-// Call the function when the page loads
 document.addEventListener('DOMContentLoaded', updateDashboard);
-
-// Optional: auto-refresh every 5 seconds
 setInterval(updateDashboard, 5000);
-
