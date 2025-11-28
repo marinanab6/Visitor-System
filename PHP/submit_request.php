@@ -1,15 +1,15 @@
 <?php
 session_start();
-include "db.php";
+include "db.php"; // PDO connection ($conn)
 
-// Make sure user is logged in as a student
+// Ensure user is logged in
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'student') {
     die("Error: Student not logged in.");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // 1. Collect form data
+    // Collect form data
     $visitorName   = trim($_POST['visitorName']);
     $visitorPhone  = trim($_POST['visitorPhone']);
     $visitorID     = trim($_POST['visitorID']);
@@ -17,35 +17,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $visitTime     = $_POST['visitTime'];
     $visitReason   = trim($_POST['visitReason']);
 
-    $username = $_SESSION['username']; // Logged in student's username
+    $username = $_SESSION['username'];
 
     /* ------------------------------------------------------
        STEP 1: Get user_id from user_account table
        ------------------------------------------------------ */
     $stmtUser = $conn->prepare("SELECT user_id FROM user_account WHERE username = ?");
-    $stmtUser->bind_param("s", $username);
-    $stmtUser->execute();
-    $stmtUser->bind_result($userID);
-    $stmtUser->fetch();
-    $stmtUser->close();
+    $stmtUser->execute([$username]);
+    $user = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-    if (!$userID) {
+    if (!$user) {
         die("Error: User ID not found.");
     }
 
+    $userID = $user['user_id'];
+
     /* ------------------------------------------------------
-       STEP 2: Get student_resident_id from student_resident
+       STEP 2: Get student_resident_id
        ------------------------------------------------------ */
     $stmtStudent = $conn->prepare("SELECT student_id FROM student_resident WHERE user_id = ?");
-    $stmtStudent->bind_param("i", $userID);
-    $stmtStudent->execute();
-    $stmtStudent->bind_result($studentResidentID);
-    $stmtStudent->fetch();
-    $stmtStudent->close();
+    $stmtStudent->execute([$userID]);
+    $student = $stmtStudent->fetch(PDO::FETCH_ASSOC);
 
-    if (!$studentResidentID) {
+    if (!$student) {
         die("Error: Student Resident ID not found.");
     }
+
+    $studentResidentID = $student['student_id'];
 
     /* ------------------------------------------------------
        STEP 3: Handle visitor photo upload
@@ -73,52 +71,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         VALUES (?, ?, ?, ?, ?, ?)
     ");
 
-    // Email is optional for visitors → Use NULL or empty string
-    $visitorEmail = "";  
+    $visitorEmail = "";
 
-    $stmtVisitor->bind_param(
-        "sssssi",
+    $stmtVisitor->execute([
         $visitorName,
         $visitorPhone,
         $visitorEmail,
         $visitorID,
         $newPhotoName,
         $studentResidentID
-    );
+    ]);
 
-    if (!$stmtVisitor->execute()) {
-        die("Error inserting visitor: " . $stmtVisitor->error);
-    }
-
-    // Get visitor's auto-generated visitor_id
-    $newVisitorID = $stmtVisitor->insert_id;
-    $stmtVisitor->close();
+    $newVisitorID = $conn->lastInsertId();
 
     /* ------------------------------------------------------
-       STEP 5: Insert visit request into visit_table
+       STEP 5: Insert visit request
        ------------------------------------------------------ */
     $stmt = $conn->prepare("
         INSERT INTO visit_table (visitor_id, visit_date, visit_time, visit_reason, student_id)
         VALUES (?, ?, ?, ?, ?)
     ");
 
-    $stmt->bind_param(
-        "isssi",
+    $success = $stmt->execute([
         $newVisitorID,
         $visitDate,
         $visitTime,
         $visitReason,
         $studentResidentID
-    );
+    ]);
 
-    if ($stmt->execute()) {
+    if ($success) {
         echo "<h2>Request Submitted Successfully 🎉</h2>";
         echo "<a href='../student.html'>Go back to Dashboard</a>";
     } else {
-        echo "Error submitting request: " . $stmt->error;
+        echo "Error submitting request.";
     }
-
-    $stmt->close();
-    $conn->close();
 }
 ?>

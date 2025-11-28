@@ -1,18 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // -------------------- Elements --------------------
     const sections = document.querySelectorAll(".section");
     const menuButtons = document.querySelectorAll(".menu-btn");
-
     const approvedCount = document.getElementById("approvedCount");
     const rejectedCount = document.getElementById("rejectedCount");
     const pendingCount = document.getElementById("pendingCount");
-
-    const notificationsContainer = document.getElementById("notifications");
-    const requestsTableBody = document.getElementById("requestsList");
+    const notificationsContainer = document.getElementById("notificationsContainer");
+    const requestsTableBody = document.getElementById("requestsTableBody");
     const detailsSection = document.getElementById("detailsSection");
     const detailsContent = document.getElementById("detailsContent");
     const backToDashboardBtn = document.getElementById("backToDashboard");
 
-    // Fetch counts for dashboard cards
+    let allRequests = []; // Store all requests globally
+
+
+    // --- NAVIGATION ---
+    menuButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const target = btn.dataset.section;
+
+            // sidebar highlight
+            menuButtons.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            // hide all sections
+            sections.forEach(sec => sec.style.display = "none");
+
+            // show section
+            document.getElementById(target).style.display = "block";
+
+            // update page title
+            title.textContent = btn.textContent.replace(/[^a-zA-Z ]/g, "");
+            
+            // load data if needed
+            if (target === "notifications") fetchNotifications();
+        });
+    });
+
+    // -------------------- Fetch counts --------------------
     function fetchCounts() {
         fetch("PHP/fetch_request_count.php")
             .then(res => res.json())
@@ -23,21 +48,22 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Fetch all requests
+    // -------------------- Fetch all requests --------------------
     function fetchRequests() {
         fetch("PHP/fetch_request.php")
             .then(res => res.json())
             .then(data => {
+                allRequests = data;
                 renderNotifications(data.filter(r => r.status === "pending"));
                 renderRequestsTable(data);
             });
     }
 
-    // Render notifications
+    // -------------------- Render notifications --------------------
     function renderNotifications(pendingRequests) {
-        notificationsContainer.innerHTML = "<h2>Notifications</h2>";
+        notificationsContainer.innerHTML = "";
         if (!pendingRequests.length) {
-            notificationsContainer.innerHTML += "<p>No new notifications.</p>";
+            notificationsContainer.innerHTML = "<p>No new notifications.</p>";
             return;
         }
 
@@ -53,17 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
             notificationsContainer.appendChild(item);
         });
 
+        // Attach click for notifications
         document.querySelectorAll(".view-details-btn").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const visitId = btn.dataset.id;
-                showSection("requests");
-                scrollToRequest(visitId);
-                loadRequestDetails(visitId);
-            });
+            btn.addEventListener("click", () => loadRequestDetails(btn.dataset.id));
         });
     }
 
-    // Render requests table
+    // -------------------- Render requests table --------------------
     function renderRequestsTable(requests) {
         requestsTableBody.innerHTML = "";
         requests.forEach((req, index) => {
@@ -80,22 +102,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Scroll to a specific request row
-    function scrollToRequest(visitId) {
-        const row = document.getElementById(`req-${visitId}`);
-        if (row) {
-            row.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    }
-
-    // Load request details below table
+      
+    // -------------------- Load request details --------------------
     function loadRequestDetails(visitId) {
         fetch(`PHP/fetch_visit_details.php?visit_id=${visitId}`)
             .then(res => res.json())
             .then(d => {
                 if (!d || d.error) {
                     detailsContent.innerHTML = "<p>Error loading details.</p>";
-                    detailsSection.style.display = "block";
+                    showSection("detailsSection");
                     return;
                 }
 
@@ -104,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <h3>Visitor Details</h3>
                         <p><strong>Name:</strong> ${d.visitor_name ?? "-"}</p>
                         <p><strong>Phone:</strong> ${d.visitor_phone ?? "-"}</p>
-                        <p><strong>ID:</strong> ${d.visitor_id ?? "-"}</p>
+                        <p><strong>ID:</strong> ${d.visitor_id_number ?? "-"}</p>
                         <p><strong>Date:</strong> ${d.visit_date ?? "-"}</p>
                         <p><strong>Time:</strong> ${d.visit_time ?? "-"}</p>
                         <p><strong>Purpose:</strong> ${d.visit_reason ?? "-"}</p>
@@ -116,22 +131,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p><strong>Status:</strong> ${formatBadge(d.status)}</p>
                         <div class="detail-actions">
                             ${d.status === "pending" ? `
-                                <button id="approveBtn" data-id="${d.visit_id}">Approve</button>
-                                <button id="rejectBtn" data-id="${d.visit_id}">Reject</button>
+                                <button id="approveBtn">Approve</button>
+                                <button id="rejectBtn">Decline</button>
                             ` : `<p>This request is already <strong>${d.status}</strong>.</p>`}
                         </div>
                     </div>
                 `;
-                detailsSection.style.display = "block";
+                showSection("detailsSection");
 
                 const approveBtn = document.getElementById("approveBtn");
                 const rejectBtn = document.getElementById("rejectBtn");
-                if (approveBtn) approveBtn.addEventListener("click", () => updateStatus(d.visit_id, "approve"));
-                if (rejectBtn) rejectBtn.addEventListener("click", () => updateStatus(d.visit_id, "reject"));
+                if (approveBtn) approveBtn.addEventListener("click", () => updateStatus(visitId, "approve"));
+                if (rejectBtn) rejectBtn.addEventListener("click", () => updateStatus(visitId, "reject"));
             });
     }
 
-    // Update request status
+    // -------------------- Update request status --------------------
     function updateStatus(visitId, action) {
         if (!confirm(`Are you sure you want to ${action} this request?`)) return;
 
@@ -143,42 +158,68 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(res => res.json())
         .then(data => {
             if (data.status === "success") {
-                alert("Request updated successfully.");
                 fetchCounts();
                 fetchRequests();
-                detailsSection.style.display = "none";
+                showSection("dashboard");
             } else {
                 alert("Failed to update request.");
             }
         });
     }
 
+    // -------------------- Helper: Format status badge --------------------
     function formatBadge(status) {
         if (status === "approved") return '<span class="status approved">Approved</span>';
         if (status === "rejected") return '<span class="status rejected">Rejected</span>';
         return '<span class="status pending">Pending</span>';
     }
 
+    // -------------------- Show / hide sections --------------------
     function showSection(id) {
         sections.forEach(s => s.style.display = "none");
-        const el = document.getElementById(id);
-        if (el) el.style.display = "block";
+        const section = document.getElementById(id);
+        if (section) section.style.display = "block";
 
         menuButtons.forEach(btn => btn.classList.remove("active"));
-        const activeBtn = document.querySelector(`[data-section="${id}"]`);
+        const activeBtn = document.querySelector(`.menu-btn[data-section="${id}"]`);
         if (activeBtn) activeBtn.classList.add("active");
 
-        if (id !== "requests") detailsSection.style.display = "none";
+        // Always hide details section if not viewing details
+        if (id !== "detailsSection") detailsSection.style.display = "none";
+
+        // Refresh notifications if Notifications tab
+        if (id === "notifications") renderNotifications(allRequests.filter(r => r.status === "pending"));
     }
+
+    // -------------------- Menu buttons --------------------
+    menuButtons.forEach(btn => {
+        btn.addEventListener("click", () => showSection(btn.dataset.section));
+    });
 
     if (backToDashboardBtn) backToDashboardBtn.addEventListener("click", () => showSection("dashboard"));
 
-    // Dashboard cards to go to Requests
+    // -------------------- Dashboard View Details buttons --------------------
     document.querySelectorAll(".details-btn").forEach(btn => {
-        btn.addEventListener("click", () => showSection("requests"));
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            showSection("requests");
+        });
     });
 
-    // Initial load
+    // -------------------- Requests filter buttons --------------------
+    document.querySelectorAll(".req-filter").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const type = btn.dataset.type;
+            const filtered = allRequests.filter(r => r.status === type);
+            renderRequestsTable(filtered);
+
+            // Highlight active filter
+            document.querySelectorAll(".req-filter").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        });
+    });
+
+    // -------------------- Initial load --------------------
     showSection("dashboard");
     fetchCounts();
     fetchRequests();

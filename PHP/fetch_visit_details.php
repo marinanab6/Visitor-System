@@ -9,7 +9,9 @@ if (!isset($_GET['visit_id'])) {
 
 $visitId = intval($_GET['visit_id']);
 
-$sql = "SELECT 
+try {
+    $sql = "
+        SELECT 
             vt.visit_id,
             vt.visitor_id,
             COALESCE(v.full_name, vt.visitor_name) AS visitor_name,
@@ -25,19 +27,22 @@ $sql = "SELECT
         LEFT JOIN visitor v ON vt.visitor_id = v.visitor_id
         LEFT JOIN student_resident sr ON vt.student_id = sr.student_id
         LEFT JOIN user_account ua ON sr.user_id = ua.user_id
-        WHERE vt.visit_id = ?
-        LIMIT 1";
+        WHERE vt.visit_id = :visitId
+        LIMIT 1
+    ";
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $visitId);
-$stmt->execute();
-$result = $stmt->get_result();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['visitId' => $visitId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $row['status'] = strtolower($row['status']);
-    echo json_encode($row);
-} else {
-    echo json_encode(["error" => "Not found"]);
+    if ($row) {
+        $row['status'] = strtolower($row['status']);
+        echo json_encode($row);
+    } else {
+        echo json_encode(["error" => "Not found"]);
+    }
+
+} catch (PDOException $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
 ?>

@@ -1,44 +1,52 @@
 <?php
 session_start();
-include 'db.php'; 
+include 'db.php';  // Must contain: $conn = new PDO(...)
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
-    // Select user by username
-    $query = "SELECT * FROM user_account WHERE username = ?";
+    // Prepare PDO query
+    $query = "SELECT * FROM user_account WHERE username = :username";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result(); 
+    $stmt->execute([':username' => $username]);
 
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc(); // fetch the user record
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Verify password
+    if ($user) {
+
+        // Check password
         if (password_verify($password, $user['password'])) {
 
-            // ✅ Password correct, set sessions
+            // Set session values
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
-            
+
             if ($user['role'] === 'student') {
-                $_SESSION['student_id'] = $user['id']; // important for dashboard
+                $_SESSION['student_id'] = $user['id'];
                 $_SESSION['student_full_name'] = $user['full_name'];
             }
 
             // Redirect based on role
-            if ($user['role'] === 'admin') {
-                header("Location: ../admin.html"); 
-            } elseif ($user['role'] === 'manager') {
-                header("Location: ../manager.php");
-            } elseif ($user['role'] === 'student') {
-                header("Location: ../student.html");
-            } elseif ($user['role'] === 'security') {
-                header("Location: ../securityofficer.html");
+            switch ($user['role']) {
+                case 'admin':
+                    header("Location: ../admin.html");
+                    break;
+
+                case 'manager':
+                    header("Location: ../manager.php");
+                    break;
+
+                case 'student':
+                    header("Location: ../student.html");
+                    break;
+
+                case 'security':
+                    header("Location: ../securityofficer.html");
+                    break;
             }
+
             exit();
 
         } else {
