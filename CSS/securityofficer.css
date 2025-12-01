@@ -239,3 +239,7 @@ body {
 .danger-btn:hover {
     background: #b13e3b;
 }
+
+.register-form {
+    display: none;
+}

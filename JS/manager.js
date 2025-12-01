@@ -12,7 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const backToDashboardBtn = document.getElementById("backToDashboard");
 
     let allRequests = []; // Store all requests globally
+    requestsTableBody.addEventListener("click", (e) => {
+        if (e.target.classList.contains("approve-row")) {
+            const visitId = e.target.dataset.id;
+            updateStatus(visitId, "approve");
+        } else if (e.target.classList.contains("reject-row")) {
+            const visitId = e.target.dataset.id;
+            updateStatus(visitId, "reject");
+        }
+    });
 
+    
 
     // --- NAVIGATION ---
     menuButtons.forEach(btn => {
@@ -61,46 +71,113 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // -------------------- Render notifications --------------------
     function renderNotifications(pendingRequests) {
-        notificationsContainer.innerHTML = "";
+        notificationsContainer.innerHTML = ""
         if (!pendingRequests.length) {
-            notificationsContainer.innerHTML = "<p>No new notifications.</p>";
+            notificationsContainer.innerHTML = "<p>No new notifications.</p>"
             return;
         }
 
         pendingRequests.forEach(req => {
-            const item = document.createElement("div");
-            item.className = "notif-item";
+            const item = document.createElement("div")
+            item.className = "notif-item"
             item.innerHTML = `
                 <p><strong>Visitor:</strong> ${req.visitor_name}</p>
                 <p><strong>Student:</strong> ${req.student_name}</p>
                 <p><strong>Date:</strong> ${req.visit_date} ${req.visit_time ?? ""}</p>
-                <button class="view-details-btn" data-id="${req.visit_id}">View Details</button>
+                <button class="view-details-btn" data-id="${req.visit_id}" style="color:white; padding:10px; background-color:red; border:none; border-radius:5px;">View Details</button>
             `;
             notificationsContainer.appendChild(item);
         });
 
-        // Attach click for notifications
-        document.querySelectorAll(".view-details-btn").forEach(btn => {
-            btn.addEventListener("click", () => loadRequestDetails(btn.dataset.id));
-        });
-    }
+       
+    
 
+    // Attach click for notifications to go to Requests section
+document.querySelectorAll(".view-details-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        // Show Requests section
+        document.getElementById("requests").style.display = "block";
+
+        // Hide other sections
+        document.querySelectorAll(".section").forEach(s => {
+            if (s.id !== "requests") s.style.display = "none";
+        });
+
+        // Highlight Requests button in sidebar
+        document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
+        const requestsBtn = document.querySelector('.menu-btn[data-section="requests"]');
+        if (requestsBtn) requestsBtn.classList.add("active");
+
+        // Scroll to the request row in the table
+        const visitId = btn.dataset.id;
+        const row = document.getElementById(`req-${visitId}`);
+        if (row) row.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        // Optional: highlight the row briefly
+        if (row) {
+            row.style.backgroundColor = "#ffff99"; // yellow highlight
+            setTimeout(() => row.style.backgroundColor = "", 2000); // remove after 2 sec
+        }
+    });
+});
+    }
     // -------------------- Render requests table --------------------
     function renderRequestsTable(requests) {
         requestsTableBody.innerHTML = "";
         requests.forEach((req, index) => {
             requestsTableBody.innerHTML += `
                 <tr id="req-${req.visit_id}">
-                    <td>${index + 1}</td>
+                    <td >${index + 1}</td>
                     <td>${req.student_name ?? "-"}</td>
                     <td>${req.visitor_name}</td>
                     <td>${req.visitor_phone ?? "-"}</td>
+                    <td>${req.visit_reason ?? "-"}</td>
                     <td>${formatBadge(req.status)}</td>
                     <td>${req.visit_date} ${req.visit_time ?? ""}</td>
+                    <td style="white-space: nowrap;">
+                ${req.status === "pending" ? `
+                    <button class="approve-row" data-id="${req.visit_id}" 
+                        style="background:green;color:white;border:none;padding:5px 10px;border-radius:5px;">Approve</button>
+                    <button class="reject-row" data-id="${req.visit_id}" 
+                        style="background:red;color:white;border:none;padding:5px 10px;border-radius:5px;margin-left:5px;">Reject</button>
+                ` : `<span style="font-weight:bold;">${req.status}</span>`}
+            </td>
                 </tr>
-            `;
-        });
+
+              
+    
+                
+                   
+            `
+})
+
+// -------------------- Attach Approve/Reject row button events --------------------
+document.querySelectorAll(".approve-row").forEach(btn => {
+    btn.addEventListener("click", () => {
+        updateStatus(btn.dataset.id, "approve"); // use the same backend logic
+    });
+});
+
+document.querySelectorAll(".reject-row").forEach(btn => {
+    btn.addEventListener("click", () => {
+        updateStatus(btn.dataset.id, "reject");
+    });
+});
+
+
+    document.querySelectorAll(".approve-inline").forEach(btn => {
+        btn.addEventListener("click", () => updateStatus(btn.dataset.id, "approve"));
+    });
+
+    document.querySelectorAll(".reject-inline").forEach(btn => {
+        btn.addEventListener("click", () => updateStatus(btn.dataset.id, "reject"));
+    });
+
+
+
     }
+
+  
 
       
     // -------------------- Load request details --------------------
@@ -164,7 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 alert("Failed to update request.");
             }
+
+            
         });
+
+        
     }
 
     // -------------------- Helper: Format status badge --------------------

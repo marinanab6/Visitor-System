@@ -1,39 +1,60 @@
 <?php
 session_start();
-include 'db.php';
+include 'db.php'; // Make sure $conn is a PDO connection
 
 // Check login
-if (!isset($_SESSION['student_id'])) {
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'student') {
     echo json_encode(["success" => false, "error" => "Not logged in"]);
     exit();
 }
 
-$studentID = $_SESSION['student_id'];
+// Get resident ID from session (assuming you saved it during login)
+$studentID = $_SESSION['student_id'] ?? null;
+if (!$studentID) {
+    echo json_encode(["success" => false, "error" => "Invalid session"]);
+    exit();
+}
 
-// Get submitted data (assuming POST via fetch or form)
-$fullName = trim($_POST['full_name']);
-$email = trim($_POST['email']);
-$phone = trim($_POST['phone']);
+// Get submitted data (support both JSON fetch and traditional POST)
+$data = $_POST;
+if (empty($data)) {
+    $data = json_decode(file_get_contents('php://input'), true);
+}
 
-// Update student profile
-$stmt = $conn->prepare("
-    UPDATE student_resident 
-    SET full_name = ?, email = ?, phone_number = ?
-    WHERE resident_id = ?
-");
-$stmt->bind_param("sssi", $fullName, $email, $phone, $studentID);
+$fullName = trim($data['full_name'] ?? '');
+$email    = trim($data['email'] ?? '');
+$phone    = trim($data['phone'] ?? '');
 
-if ($stmt->execute()) {
+// Validate required fields
+if (!$fullName || !$email || !$phone) {
+    echo json_encode(["success" => false, "error" => "All fields are required"]);
+    exit();
+}
+
+// Update student profile using PDO
+try {
+    $stmt = $conn->prepare("
+        UPDATE student_resident 
+        SET full_name = :full_name, email = :email, phone_number = :phone
+        WHERE student_id = :id
+    ");
+
+    $stmt->execute([
+        ':full_name' => $fullName,
+        ':email'     => $email,
+        ':phone'     => $phone,
+        ':id'        => $studentID
+    ]);
+
     // Update session so dashboard reflects new info
     $_SESSION['student_full_name'] = $fullName;
-    $_SESSION['student_email'] = $email;
+    $_SESSION['email'] = $email;
     $_SESSION['student_phone'] = $phone;
 
     echo json_encode(["success" => true, "message" => "Profile updated successfully!"]);
-} else {
-    echo json_encode(["success" => false, "error" => $stmt->error]);
+
+} catch (PDOException $e) {
+    echo json_encode(["success" => false, "error" => $e->getMessage()]);
 }
 
-$stmt->close();
-$conn->close();
 ?>

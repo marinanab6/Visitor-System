@@ -1,4 +1,43 @@
-// Sidebar highlight
+
+
+// GET EMAIL FROM LOGIN PAGE URL
+const urlParams = new URLSearchParams(window.location.search);
+const loginEmail = urlParams.get("email");
+
+if (loginEmail) {
+    // Save in localStorage
+    localStorage.setItem("studentEmail", loginEmail);
+
+    // Display immediately in sidebar
+    document.querySelector(".email").textContent = loginEmail;
+}
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const emailDisplay = document.querySelector(".email");
+    const savedEmail = localStorage.getItem("studentEmail");
+
+    if (savedEmail) {
+        emailDisplay.textContent = savedEmail;
+    }
+});
+
+
+const profileForm = document.querySelector('form[action="PHP/update_profile.php"]');
+
+if (profileForm) {
+    profileForm.addEventListener("submit", () => {
+        const newEmail = profileForm.querySelector('input[name="email"]').value;
+
+        // Update sidebar email immediately
+        document.querySelector(".email").textContent = newEmail;
+
+        // Save to localStorage
+        localStorage.setItem("studentEmail", newEmail);
+    });
+}
+
 const menuItems = document.querySelectorAll(".menu-btn");
 menuItems.forEach(item => {
     item.addEventListener("click", () => {
@@ -107,6 +146,17 @@ document.getElementById("updatePasswordBtn").addEventListener("click", () => {
 // Profile picture preview
 const imageInput = document.getElementById("imageInput");
 const previewImage = document.getElementById("previewImage");
+
+const savePicBtn = document.querySelector("#pictureTab .save-btn");
+
+savePicBtn.addEventListener("click", () => {
+    if (imageInput.files.length === 0) {
+        alert("Please choose a picture first.");
+        return;
+    }
+
+    alert("Profile picture updated successfully!");
+});
 
 imageInput.addEventListener("change", () => {
     const file = imageInput.files[0];

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // NAVIGATION
   // ------------------------
   const navButtons = document.querySelectorAll(".menu-btn");
-  const sections = document.querySelectorAll("main .section, .request-form");
+  const sections = document.querySelectorAll("main .section, .register-form");
 
   function showSection(sectionId) {
     sections.forEach(sec => sec.style.display = "none");
@@ -51,12 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // ------------------------
   toggleRegister.addEventListener("click", () => {
     registerForm.style.display = "block";
-    showSection("dashboard");
+  
   });
 
   cancelRegister.addEventListener("click", () => {
     registerForm.style.display = "none";
-    showSection("dashboard");
+    
   });
 
   newVisitorForm.addEventListener("submit", (e) => {
@@ -80,11 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
     registerMsg.style.display = "block";
 
     setTimeout(() => {
-      registerMsg.style.display = "none";
-      newVisitorForm.reset();
-      registerForm.style.display = "none";
-      showSection("dashboard");
-    }, 1200);
+  registerMsg.style.display = "none";
+  newVisitorForm.reset();
+  registerForm.style.display = "none";
+}, 1200);
+
   });
 
   // ------------------------
@@ -177,20 +177,45 @@ document.addEventListener("DOMContentLoaded", () => {
     updateTable();
   });
 
-  // ------------------------
-  // CHECK VISITOR BY PHONE
-  // ------------------------
-  document.getElementById("checkVisitorBtn").addEventListener("click", () => {
-    const phoneNumber = prompt("Enter visitor phone number:");
-    if (!phoneNumber) return alert("No phone number entered.");
+  // Show check visitor section when sidebar button clicked
+document.getElementById("checkVisitorBtn").addEventListener("click", () => {
+    showSection("checkVisitorSection");
+});
 
-    const found = visitors.find(v => v.phone === phoneNumber);
-    if (found) {
-      alert(`Visitor found:\nName: ${found.name}\nID: ${found.id}\nStatus: ${found.status}`);
-    } else {
-      alert("❌ Visitor not found or not invited.");
+// Trigger the fetch when the new Check button is clicked
+document.getElementById("checkVisitorBtn2").addEventListener("click", () => {
+    const phone = document.getElementById("visitorPhoneInput").value.trim();
+
+    if (phone === "") {
+        alert("Please enter a phone number.");
+        return;
     }
-  });
+
+    fetch("PHP/check_visitor.php?phone=" + phone)
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("visitorResult");
+
+            if (data.status === "not_found") {
+                container.innerHTML = "<p style='color:red;'>Visitor not found.</p>";
+                return;
+            }
+
+            container.innerHTML = `
+                <p><strong>Name:</strong> ${data.visitor_name}</p>
+                <p><strong>Phone:</strong> ${data.phone}</p>
+                <p><strong>Student:</strong> ${data.student_name}</p>
+                <p><strong>Room:</strong> ${data.room_number}</p>
+                <p><strong>Purpose:</strong> ${data.purpose}</p>
+
+                <button id="getInBtn" style="padding:10px;background:green;color:white;border:none;border-radius:5px;" data-id="${data.visit_id}">Get In</button>
+            `;
+
+            document.getElementById("getInBtn").addEventListener("click", () => {
+                updateStatus(data.visit_id, "arrived");
+            });
+        });
+});
 
   // ------------------------
   // SETTINGS TABS

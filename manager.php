@@ -79,8 +79,10 @@
                         <th>Student</th>
                         <th>Visitor</th>
                         <th>Phone</th>
+                        <th>Purpose</th>
                         <th>Status</th>
                         <th>Date</th>
+                        <th>Action</th> 
                     </tr>
                 </thead>
                 <tbody id="requestsTableBody"></tbody>
@@ -94,11 +96,16 @@
         </section>
 
         <!-- SETTINGS SECTION -->
-        <section id="settings" class="section">
+        <section id="settingsSection" class="section" style="display:none;">
             <h2>Settings</h2>
-            <!-- tabs and forms here as before -->
-        </section>
 
+            <!-- TABS -->
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="profileTab">Update Profile</button>
+                <button class="settings-tab" data-tab="passwordTab">Change Password</button>
+                <button class="settings-tab" data-tab="pictureTab">Profile Picture</button>
+                
+            </div>
     </main>
 
 </div>

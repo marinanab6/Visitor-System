@@ -1,44 +1,35 @@
 <?php
-// Include database connection
-include 'db.php';
 session_start();
+include 'db.php'; // PDO connection
 
-// Make sure student is logged in and has an ID in session
 if (!isset($_SESSION['student_id'])) {
-    echo json_encode(['error' => 'Student not logged in']);
+    echo json_encode(['error' => 'Invalid session']);
     exit;
 }
 
 $student_id = $_SESSION['student_id'];
 
-// Prepare array to store counts
-$data = [];
-
-// Function to get count for a specific status
+// Function to get request count
 function getRequestCount($conn, $student_id, $status = null) {
     if ($status) {
-        $query = "SELECT COUNT(*) as count FROM requests WHERE student_id=? AND status=?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("is", $student_id, $status);
+        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM requests WHERE student_id = :student_id AND status = :status");
+        $stmt->execute([':student_id' => $student_id, ':status' => $status]);
     } else {
-        $query = "SELECT COUNT(*) as count FROM requests WHERE student_id=?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $student_id);
+        $stmt = $conn->prepare("SELECT COUNT(*) as count FROM requests WHERE student_id = :student_id");
+        $stmt->execute([':student_id' => $student_id]);
     }
 
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $count = $result->fetch_assoc()['count'];
-    $stmt->close();
-    return $count;
+    return (int)$stmt->fetch(PDO::FETCH_ASSOC)['count'];
 }
 
 // Get counts
-$data['denied'] = getRequestCount($conn, $student_id, 'Denied');
-$data['accepted'] = getRequestCount($conn, $student_id, 'Accepted');
-$data['total'] = getRequestCount($conn, $student_id);
+$data = [
+    'denied' => getRequestCount($conn, $student_id, 'Denied'),
+    'accepted' => getRequestCount($conn, $student_id, 'Accepted'),
+    'total' => getRequestCount($conn, $student_id)
+];
 
-// Return data as JSON
+// Return JSON
 header('Content-Type: application/json');
 echo json_encode($data);
 ?>
