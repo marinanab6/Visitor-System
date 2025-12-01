@@ -66,12 +66,47 @@ function hideAllSections() {
 }
 
 // Dashboard button (fixed)
+
+
 document.getElementById("btnDashboard").addEventListener("click", () => {
     hideAllSections();
     title.textContent = "Student Dashboard";
     dashboard.style.display = "flex";
     statusBtn.style.display = "inline-block";
 });
+
+
+const dashboardCards = document.getElementById("dashboardCards");
+
+dashboardCards.addEventListener("click", (e) => {
+    if (e.target.classList.contains("details-btn")) {
+        const btn = e.target;
+
+        // Hide all sections
+        hideAllSections();
+        detailsSection.style.display = "block";
+
+        const card = btn.closest(".card");
+        const cardTitle = card.querySelector("h3").textContent;
+        const cardIcon = card.querySelector(".icon").textContent;
+
+        title.textContent = cardTitle;
+        document.getElementById("detailsTitle").textContent = cardTitle;
+
+        document.getElementById("detailsContent").innerHTML = `
+            <div style="font-size: 50px; text-align:center">${cardIcon}</div>
+
+            <p style="margin-top: 15px; text-align:center;">
+                Detailed analytics for <strong>${cardTitle}</strong>.
+            </p>
+
+            <p style="margin-top:10px;">
+                You can put logs, charts, tables and backend data here.
+            </p>
+        `;
+    }
+});
+
 
 // New request
 document.getElementById("btnNewRequest").addEventListener("click", () => {
@@ -180,37 +215,7 @@ document.querySelector(".logout").addEventListener("click", () => {
 
 // VIEW DETAILS INTO NEW SECTION -------------------------------------
 
-const detailBtns = document.querySelectorAll(".details-btn");
-const detailsTitle = document.getElementById("detailsTitle");
-const detailsContent = document.getElementById("detailsContent");
-const backToDashboard = document.getElementById("backToDashboard");
 
-detailBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-
-        hideAllSections();   // hide dashboard + everything
-        detailsSection.style.display = "block";  // show details section
-
-        const card = btn.closest(".card");
-        const cardTitle = card.querySelector("h3").textContent;
-        const cardIcon = card.querySelector(".icon").textContent;
-
-        title.textContent = cardTitle;
-        detailsTitle.textContent = cardTitle;
-
-        detailsContent.innerHTML = `
-            <div style="font-size: 50px; text-align:center">${cardIcon}</div>
-
-            <p style="margin-top: 15px; text-align:center;">
-                Detailed analytics for <strong>${cardTitle}</strong>.
-            </p>
-
-            <p style="margin-top:10px;">
-                You can put logs, charts, tables and backend data here.
-            </p>
-        `;
-    });
-});
 
 // Back from details to dashboard
 backToDashboard.addEventListener("click", () => {
@@ -281,6 +286,36 @@ function updateDashboard() {
         })
         .catch(error => console.error('Error fetching dashboard data:', error));
 }
+
+
+function loadNotifications() {
+    fetch("PHP/get_notifications.php")
+        .then(res => res.json())
+        .then(data => {
+            const box = document.getElementById("studentNotifications");
+            box.innerHTML = "";
+
+            if (data.length === 0) {
+                box.innerHTML = "<p>No notifications</p>";
+                return;
+            }
+
+            data.forEach(notif => {
+                const div = document.createElement("div");
+                div.classList.add("notification-item");
+                div.textContent = notif.message;
+                box.appendChild(div);
+            });
+        });
+}
+
+const backToDashboard = document.getElementById("backToDashboard");
+setInterval(loadNotifications, 5000); // refresh every 5 seconds
+
+
+// call on load
+document.addEventListener("DOMContentLoaded", loadNotifications);
+
 
 // Call the function when the page loads
 document.addEventListener('DOMContentLoaded', updateDashboard);

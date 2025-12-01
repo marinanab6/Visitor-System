@@ -6,6 +6,15 @@ include 'db.php'; // Make sure $conn is a PDO connection
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'student') {
     echo json_encode(["success" => false, "error" => "Not logged in"]);
     exit();
+}else if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'manager') {
+    echo json_encode(["success" => false, "error" => "Not logged in"]);
+    exit();
+}else if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    echo json_encode(["success" => false, "error" => "Not logged in"]);
+    exit();
+}else if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'security') {
+    echo json_encode(["success" => false, "error" => "Not logged in"]);
+    exit();
 }
 
 // Get resident ID from session (assuming you saved it during login)
@@ -15,6 +24,17 @@ if (!$studentID) {
     exit();
 }
 
+$staff_id = $_SESSION['staff_id'] ?? null;
+if (!$staff_id) {
+    echo json_encode(["success" => false, "error" => "Invalid session"]);
+    exit();
+}
+
+$officcer_id = $_SESSION['officer_id'] ?? null;
+if (!$officcer_id) {
+    echo json_encode(["success" => false, "error" => "Invalid session"]);
+    exit();
+}
 // Get submitted data (support both JSON fetch and traditional POST)
 $data = $_POST;
 if (empty($data)) {

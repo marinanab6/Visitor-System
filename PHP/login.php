@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';  // Must contain: $conn = new PDO(...)
+include 'db.php';  
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 

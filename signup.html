@@ -51,10 +51,27 @@
                 <label for="studentId">Student ID</label>
                 <input type="text" id="studentId" name="student_id" placeholder="Enter student ID">
             </div>
+        
 
             <div class="input-group">
                 <label for="roomNumber">Room Number</label>
                 <input type="text" id="roomNumber" name="room_number" placeholder="Enter room number">
+            </div>
+        </div>
+
+
+        <div id="securityFields" style="display: none;">
+            <div class="input-group">
+                <label for="security">Officer ID</label>
+                <input type="text" id="securityId" name="officer_id" placeholder="Enter officer ID">
+            </div>
+
+        </div>
+
+        <div id="staffFields" style="display:none;">
+              <div class="input-group">
+                <label for="staffId">Staff ID</label>
+                <input type="text" id="staffId" name="staff_id" placeholder="Enter staff ID">
             </div>
         </div>
 
@@ -71,13 +88,23 @@
     // Show/hide student fields
     const signupRole = document.getElementById("signupRole");
     const studentFields = document.getElementById("studentFields");
+    const securityFields = document.getElementById("securityFields");
+    const staffFields = document.getElementById("staffFields");
 
     if (signupRole && studentFields) {
         signupRole.addEventListener("change", () => {
             if (signupRole.value === "student") {
                 studentFields.style.display = "block";
-            } else {
+            } else if (signupRole.value === "security") {
                 studentFields.style.display = "none";
+            }else if(signupRole.value === 'manager' || signupRole.value === 'admin'){
+                staffFields.style.display = "block";
+                securityFields.style.display = "none";
+            }
+             else {
+                studentFields.style.display = "none";
+                securityFields.style.display = "none";
+                staffFields.style.display = "none";
             }
         });
     }

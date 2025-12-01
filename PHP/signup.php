@@ -47,6 +47,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ':user_id'     => $user_id,
                 ':room_number' => $room_number
             ]);
+        }else if($role === 'security'){
+            $officer_id = $_POST['officer_id'];
+
+            $stmt3 = $conn->prepare("
+                INSERT INTO security_officer (officer_id, user_id)
+                VALUES (:officer_id, :user_id)
+            ");
+
+            $stmt3->execute([
+                ':officer_id' => $officer_id,
+                ':user_id'    => $user_id
+            ]);
+
+        }else if($role === 'manager' || $role === 'admin'){
+            $staff_id = $_POST['staff_id'];
+
+            $stmt4 = $conn->prepare("
+                INSERT INTO staff (staff_id, name,role)
+                VALUES (:staff_id, :name,:role)
+            ");
+
+            $stmt4->execute([
+                ':staff_id' => $staff_id,
+                ':name'  => $username,
+                ':role' => $role
+            ]);
         }
 
         echo "Signup successful! You can now log in.<br>";

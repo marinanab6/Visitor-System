@@ -98,6 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $visitTime,
         $visitReason,
         $studentResidentID
+        'pending'
     ]);
 
     if ($success) {

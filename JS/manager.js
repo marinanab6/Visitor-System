@@ -1,5 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     // -------------------- Elements --------------------
+
+
+    const emailDisplay = document.querySelector(".email"); // sidebar element
+    const savedEmail = localStorage.getItem("managerEmail"); // get from localStorage
+    if (savedEmail && emailDisplay) {
+        emailDisplay.textContent = savedEmail;
+    }
     const sections = document.querySelectorAll(".section");
     const menuButtons = document.querySelectorAll(".menu-btn");
     const approvedCount = document.getElementById("approvedCount");
@@ -151,18 +158,6 @@ document.querySelectorAll(".view-details-btn").forEach(btn => {
             `
 })
 
-// -------------------- Attach Approve/Reject row button events --------------------
-document.querySelectorAll(".approve-row").forEach(btn => {
-    btn.addEventListener("click", () => {
-        updateStatus(btn.dataset.id, "approve"); // use the same backend logic
-    });
-});
-
-document.querySelectorAll(".reject-row").forEach(btn => {
-    btn.addEventListener("click", () => {
-        updateStatus(btn.dataset.id, "reject");
-    });
-});
 
 
     document.querySelectorAll(".approve-inline").forEach(btn => {
@@ -176,6 +171,22 @@ document.querySelectorAll(".reject-row").forEach(btn => {
 
 
     }
+
+
+
+    const profileForm = document.querySelector('form[action="PHP/update_profile.php"]');
+
+if (profileForm) {
+    profileForm.addEventListener("submit", () => {
+        const newEmail = profileForm.querySelector('input[name="email"]').value;
+
+        // Update sidebar email immediately
+        document.querySelector(".email").textContent = newEmail;
+
+        // Save to localStorage
+        localStorage.setItem("studentEmail", newEmail);
+    });
+}
 
   
 
@@ -230,7 +241,8 @@ document.querySelectorAll(".reject-row").forEach(btn => {
         fetch("PHP/update_request_status.php", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `visit_id=${visitId}&action=${action}`
+            body: `visit_id=${visitId}&action=${action}`,
+            credentials: 'include'
         })
         .then(res => res.json())
         .then(data => {
@@ -239,7 +251,7 @@ document.querySelectorAll(".reject-row").forEach(btn => {
                 fetchRequests();
                 showSection("dashboard");
             } else {
-                alert("Failed to update request.");
+                alert("Failed to update request."   + (data.message || "Unknown error"))
             }
 
             
