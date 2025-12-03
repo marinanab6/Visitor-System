@@ -1,6 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
     // -------------------- Elements --------------------
+const urlParams = new URLSearchParams(window.location.search);
+const loginEmail = urlParams.get("email");
 
+if (loginEmail) {
+    // Save in localStorage
+    localStorage.setItem("managerEmail", loginEmail);
+
+    // Display immediately in sidebar
+    document.querySelector(".email").textContent = loginEmail;
+}
 
     const emailDisplay = document.querySelector(".email"); // sidebar element
     const savedEmail = localStorage.getItem("managerEmail"); // get from localStorage
@@ -174,19 +183,52 @@ document.querySelectorAll(".view-details-btn").forEach(btn => {
 
 
 
-    const profileForm = document.querySelector('form[action="PHP/update_profile.php"]');
+   const profileForm = document.querySelector('form[action="PHP/update_profile.php"]');
 
 if (profileForm) {
-    profileForm.addEventListener("submit", () => {
+    profileForm.addEventListener("submit", (e) => {
+        e.preventDefault(); // prevent default form submission
+
         const newEmail = profileForm.querySelector('input[name="email"]').value;
 
         // Update sidebar email immediately
-        document.querySelector(".email").textContent = newEmail;
+        const emailDisplay = document.querySelector(".email");
+        if (emailDisplay) emailDisplay.textContent = newEmail;
 
-        // Save to localStorage
-        localStorage.setItem("studentEmail", newEmail);
+        // Save to localStorage for manager
+        localStorage.setItem("managerEmail", newEmail);
+
+        // Optionally submit form via fetch/AJAX or allow default form submission
+        profileForm.submit();
     });
 }
+  
+const profileEmailInput = document.querySelector('form[action="PHP/update_profile.php"] input[name="email"]');
+if (profileEmailInput) {
+    const savedEmail = localStorage.getItem("managerEmail");
+    if (savedEmail) profileEmailInput.value = savedEmail;
+}
+
+// Settings Tabs
+const settingsTabs = document.querySelectorAll(".settings-tab");
+const settingsContents = document.querySelectorAll(".settings-content");
+
+settingsTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        // Remove active from all tabs
+        settingsTabs.forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        // Hide all content
+        settingsContents.forEach(c => c.style.display = "none");
+
+        // Show selected content
+        const targetId = tab.dataset.tab;
+        const targetContent = document.getElementById(targetId);
+        if (targetContent) targetContent.style.display = "block";
+    });
+});
+
 
   
 

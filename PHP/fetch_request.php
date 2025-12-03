@@ -20,7 +20,7 @@ try {
         LEFT JOIN visitor v ON vt.visitor_id = v.visitor_id
         LEFT JOIN student_resident sr ON vt.student_id = sr.student_id
         LEFT JOIN user_account ua ON sr.user_id = ua.user_id
-        ORDER BY vt.visit_date DESC, vt.visit_time DESC
+        ORDER BY vt.visit_date ASC, vt.visit_time ASC
     ";
 
     $stmt = $conn->query($sql);

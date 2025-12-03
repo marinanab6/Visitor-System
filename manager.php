@@ -89,12 +89,9 @@
             </table>
         </section>
 
-        <!-- DETAILS SECTION -->
-        <section id="detailsSection" class="section" style="display:none;">
-            <button id="backToDashboard">← Back</button>
-            <div id="detailsContent"></div>
-        </section>
+       
 
+        
         <!-- SETTINGS SECTION -->
         <section id="settingsSection" class="section" style="display:none;">
             <h2>Settings</h2>
@@ -106,6 +103,77 @@
                 <button class="settings-tab" data-tab="pictureTab">Profile Picture</button>
                 
             </div>
+
+            <!-- PROFILE TAB -->
+<div id="profileTab" class="settings-content">
+    <h3>Update Profile</h3>
+
+    <form class="settings-form" action="PHP/update_profile.php" method="POST">
+
+        <label>Full Name</label>
+        <input type="text" name="full_name" 
+               
+               placeholder="Enter full name" required>
+
+        <label>Email Address</label>
+        <input type="email" name="email" 
+               placeholder="Enter email" required>
+
+        <label>Phone Number</label>
+        <input type="text" name="phone" 
+        
+               placeholder="Enter phone number" required>
+
+        <button type="submit" class="save-btn">Save Changes</button>
+    </form>
+</div>
+
+
+            <!-- PASSWORD TAB -->
+            <div id="passwordTab" class="settings-content" style="display:none;">
+                <h3>Change Password</h3>
+
+                <form class="settings-form" id="passwordForm">
+                    <label>Current Password</label>
+                    <input type="password" id="currentPass" placeholder="Enter current password">
+
+                    <label>New Password</label>
+                    <input type="password" id="newPass" placeholder="Enter new password">
+
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmPass" placeholder="Confirm new password">
+
+                    <p id="passError" style="color:red; display:none;"></p>
+
+                    <button type="button" id="updatePasswordBtn" class="save-btn">Update Password</button>
+                </form>
+            </div>
+
+            <!-- PROFILE PICTURE TAB -->
+            <div id="pictureTab" class="settings-content" style="display:none;">
+                <h3>Update Profile Picture</h3>
+
+                <div class="profile-picture-box">
+                    <img src="user.jpg" alt="Profile Picture" class="preview-img" id="previewImage">
+                    <input type="file" id="imageInput" accept="image/*">
+                </div>
+
+                <button type="button" class="save-btn">Upload Picture</button>
+            </div>
+
+           
+        </section>
+        <!-- DETAILS SECTION -->
+<div id="detailsSection" class="details-section">
+    <button id="backToDashboard" class="details-back">← Back</button>
+    <h2 id="detailsTitle">Details</h2>
+    <div id="detailsContent" class="details-content">
+        
+    </div>
+</div>
+
+
+            
     </main>
 
 </div>

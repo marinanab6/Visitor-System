@@ -24,8 +24,8 @@ function getRequestCount($conn, $student_id, $status = null) {
 
 // Get counts
 $data = [
-    'denied' => getRequestCount($conn, $student_id, 'Denied'),
-    'accepted' => getRequestCount($conn, $student_id, 'Accepted'),
+    'denied' => getRequestCount($conn, $student_id, 'rejected'),
+    'accepted' => getRequestCount($conn, $student_id, 'approved'),
     'total' => getRequestCount($conn, $student_id)
 ];
 

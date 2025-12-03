@@ -1,5 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
     // -------------------- ELEMENTS --------------------
+    // 
+    
+      const urlParams = new URLSearchParams(window.location.search);
+      const loginEmail = urlParams.get("email");
+
+if (loginEmail) {
+    // Save in localStorage
+    localStorage.setItem("adminEmail", loginEmail);
+
+    // Display immediately in sidebar
+    document.querySelector(".email").textContent = loginEmail;
+}
+
+const emailDisplay = document.querySelector(".email"); // sidebar element
+    const savedEmail = localStorage.getItem("managerEmail"); // get from localStorage
+    if (savedEmail && emailDisplay) {
+        emailDisplay.textContent = savedEmail;
+    }
     const menuButtons = document.querySelectorAll(".menu-btn");
     const sections = document.querySelectorAll(".section");
     const title = document.querySelector(".title");
@@ -105,13 +123,13 @@ function formatBadge(status) {
                             <td style="border-bottom:0.5px solid black;padding:12px;">${req.visit_date ?? "-"} ${req.visit_time ?? ""}</td>
                             <td style=" border-bottom:0.5px solid black;padding:14px;display:flex ;justify-content:center; white-space: nowrap;">
             ${req.status === "pending" ? `
-                <button class="approve-row" data-id= " ${req.visit_id}" 
+                <button style=border-bottom:1px solid black;class="approve-row" data-id= " ${req.visit_id}" 
                    style="flex:1;background:green; color:white; border:none; 
-               padding:12px ; border-radius:7px; ">Approve
+               padding:14px ; border-radius:7px; ">Approve
                 </button>
 
                 <button class="reject-row" data-id="${req.visit_id}" 
-                    style=" flex:1;background:red;color:white;border:none;padding:12px ;margin-left:10px;border-radius:7px;b">
+                    style=" flex:1;background:red;color:white;border:none;padding:14px ;margin-left:10px;border-radius:7px;b">
                     Reject
                 </button>
             ` : `
@@ -222,3 +240,81 @@ document.querySelectorAll(".view-details-btn").forEach(btn => {
     // -------------------- INITIAL LOAD --------------------
     fetchDashboardCounts();
 });
+
+const updatePasswordBtn = document.querySelector("#passwordTab .save-btn");
+if (updatePasswordBtn) {
+    updatePasswordBtn.addEventListener("click", () => {
+        const current = document.querySelector("#passwordTab input[placeholder='Enter current password']").value;
+        const newPass = document.querySelector("#passwordTab input[placeholder='Enter new password']").value;
+        const confirmPass = document.querySelector("#passwordTab input[placeholder='Confirm new password']").value;
+
+        if(newPass.length < 6){
+            alert("Password must be at least 6 characters.");
+            return;
+        }
+        if(newPass !== confirmPass){
+            alert("Passwords do not match.");
+            return;
+        }
+
+        // Call backend PHP to update password
+        fetch("PHP/change_password.php", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({email: localStorage.getItem("securityEmail"), current, newPass})
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+        });
+    });
+}
+
+const pictureInput = document.querySelector("#pictureTab input[type='file']");
+const previewImg = document.querySelector("#pictureTab .preview-img");
+const uploadBtn = document.querySelector("#pictureTab .save-btn");
+
+if(pictureInput && previewImg){
+    pictureInput.addEventListener("change", () => {
+        const file = pictureInput.files[0];
+        if(file) previewImg.src = URL.createObjectURL(file);
+    });
+}
+
+if(uploadBtn){
+    uploadBtn.addEventListener("click", () => {
+        const file = pictureInput.files[0];
+        if(!file){
+            alert("Please select a picture.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("email", localStorage.getItem("securityEmail"));
+        formData.append("profile_picture", file);
+
+        fetch("PHP/upload_picture.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+        });
+    });
+}
+
+
+
+const adminEmail = localStorage.getItem("adminEmail");
+if(adminEmail){
+    fetch(`PHP/get_profile.php?email=${adminEmail}`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.profile_picture){
+                const img = document.querySelector(".preview-img");
+                if(img) img.src = `uploads/${data.profile_picture}?t=${Date.now()}`;
+            }
+        });
+}
+

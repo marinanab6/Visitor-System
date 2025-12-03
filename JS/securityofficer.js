@@ -2,15 +2,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // ------------------------
   // NAVIGATION
   // ------------------------
+  const urlParams = new URLSearchParams(window.location.search);
+  const loginEmail = urlParams.get("email");
+
+  if (loginEmail) {
+    localStorage.setItem("securityEmail", loginEmail);
+    document.querySelector(".email").textContent = loginEmail;
+  }
+
   const navButtons = document.querySelectorAll(".menu-btn");
   const sections = document.querySelectorAll("main .section, .register-form");
+  const checkVisitor = document.getElementById("checkVisitor");
 
   function showSection(sectionId) {
     sections.forEach(sec => sec.style.display = "none");
     const active = document.getElementById(sectionId);
     if (active) active.style.display = "block";
 
-    // Highlight sidebar button
     navButtons.forEach(btn => btn.classList.remove("active"));
     const activeBtn = Array.from(navButtons).find(btn => btn.dataset.section === sectionId);
     if (activeBtn) activeBtn.classList.add("active");
@@ -24,39 +32,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   showSection("dashboard");
 
+  function checkVisitorPhone(visitor) {
+    const phoneCheckTableBody = document.getElementById("phoneCheckTableBody");
+    phoneCheckTableBody.innerHTML = "";
+
+    phoneCheckTableBody.innerHTML = `
+      <tr id="visitor-${visitor.id_number}">
+        <td>${visitor.id_number ?? "-"}</td>
+        <td>${visitor.full_name ?? "-"}</td>
+        <td>${visitor.phone_number ?? "-"}</td>
+        <td>${visitor.email ?? "-"}</td>
+        <td>${visitor.student_resident_id ?? "-"}</td>
+        <td>
+          ${visitor.visitor_photo 
+            ? `<img src="uploads/${visitor.visitor_photo}" width="50" height="50" style="border-radius: 5px;">`
+            : "No Photo"
+          }
+        </td>
+      </tr>
+    `;
+  }
+
   // ------------------------
   // VISITOR STORAGE
   // ------------------------
   let visitors = [];
 
-  // DOM Elements
   const totalCount = document.getElementById("totalCount");
   const checkedInCount = document.getElementById("checkedInCount");
   const checkedOutCount = document.getElementById("checkedOutCount");
   const listArea = document.getElementById("listArea");
   const visitorsTableBody = document.querySelector("#visitorsTable tbody");
   const emptyMsg = document.getElementById("emptyMsg");
-
   const searchInput = document.getElementById("searchInput");
   const filterSelect = document.getElementById("filterSelect");
-
   const registerForm = document.getElementById("registerForm");
   const toggleRegister = document.getElementById("toggleRegister");
   const cancelRegister = document.getElementById("cancelRegister");
   const registerMsg = document.getElementById("registerMsg");
   const newVisitorForm = document.getElementById("newVisitorForm");
 
-  // ------------------------
-  // SHOW REGISTER FORM
-  // ------------------------
   toggleRegister.addEventListener("click", () => {
     registerForm.style.display = "block";
-  
   });
 
   cancelRegister.addEventListener("click", () => {
     registerForm.style.display = "none";
-    
   });
 
   newVisitorForm.addEventListener("submit", (e) => {
@@ -80,25 +101,18 @@ document.addEventListener("DOMContentLoaded", () => {
     registerMsg.style.display = "block";
 
     setTimeout(() => {
-  registerMsg.style.display = "none";
-  newVisitorForm.reset();
-  registerForm.style.display = "none";
-}, 1200);
-
+      registerMsg.style.display = "none";
+      newVisitorForm.reset();
+      registerForm.style.display = "none";
+    }, 1200);
   });
 
-  // ------------------------
-  // UPDATE COUNTS
-  // ------------------------
   function updateCounts() {
     totalCount.innerText = visitors.length;
     checkedInCount.innerText = visitors.filter(v => v.status === "checked-in").length;
     checkedOutCount.innerText = visitors.filter(v => v.status === "checked-out").length;
   }
 
-  // ------------------------
-  // UPDATE TABLE
-  // ------------------------
   function updateTable() {
     const searchValue = searchInput.value.toLowerCase();
     const filter = filterSelect.value;
@@ -109,9 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         v.id.toLowerCase().includes(searchValue) ||
         v.phone.toLowerCase().includes(searchValue);
 
-      const matchFilter =
-        filter === "all" ||
-        filter === v.status;
+      const matchFilter = filter === "all" || filter === v.status;
 
       return matchSearch && matchFilter;
     });
@@ -158,68 +170,68 @@ document.addEventListener("DOMContentLoaded", () => {
   searchInput.addEventListener("input", updateTable);
   filterSelect.addEventListener("change", updateTable);
 
-  // ------------------------
-  // DASHBOARD CARD BUTTONS
-  // ------------------------
   document.getElementById("openRequests").addEventListener("click", () => {
     showSection("listArea");
     filterSelect.value = "all";
     updateTable();
   });
+
   document.getElementById("openCheckedIn").addEventListener("click", () => {
     showSection("listArea");
     filterSelect.value = "checked-in";
     updateTable();
   });
+
   document.getElementById("openCheckedOut").addEventListener("click", () => {
     showSection("listArea");
     filterSelect.value = "checked-out";
     updateTable();
   });
 
-  // Show check visitor section when sidebar button clicked
-document.getElementById("checkVisitorBtn").addEventListener("click", () => {
+  document.getElementById("checkVisitorBtn").addEventListener("click", () => {
     showSection("checkVisitorSection");
-});
+  });
 
-// Trigger the fetch when the new Check button is clicked
-document.getElementById("checkVisitorBtn2").addEventListener("click", () => {
+  document.getElementById("checkVisitorBtn2").addEventListener("click", () => {
     const phone = document.getElementById("visitorPhoneInput").value.trim();
 
     if (phone === "") {
-        alert("Please enter a phone number.");
-        return;
+      alert("Please enter a phone number.");
+      return;
     }
 
-    fetch("PHP/check_visitor.php?phone=" + phone)
-        .then(res => res.json())
-        .then(data => {
-            const container = document.getElementById("visitorResult");
+    fetch("PHP/check_visitor.php?phone_number=" + phone)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Fetched data:", data);
+        const container = document.getElementById("visitorResult");
 
-            if (data.status === "not_found") {
-                container.innerHTML = "<p style='color:red;'>Visitor not found.</p>";
-                return;
-            }
+        if (data.status === "not_found") {
+          container.innerHTML = "<p style='color:red;'>Visitor not found.</p>";
+          return;
+        }
 
-            container.innerHTML = `
-                <p><strong>Name:</strong> ${data.visitor_name}</p>
-                <p><strong>Phone:</strong> ${data.phone}</p>
-                <p><strong>Student:</strong> ${data.student_name}</p>
-                <p><strong>Room:</strong> ${data.room_number}</p>
-                <p><strong>Purpose:</strong> ${data.purpose}</p>
+        container.innerHTML = `
+  <p><strong>Name:</strong> ${data.full_name}</p>
+  <p><strong>Phone:</strong> ${data.phone_number}</p>
+  <p><strong>Visitor ID:</strong> ${data.id_number}</p>
+  <p><strong>Student:</strong> ${data.student_resident_id}</p>
+  <p><strong>Email:</strong> ${data.email}</p>
+  <img src="uploads/${data.visitor_photo}" 
+       alt="Visitor Photo" 
+       style="max-width:200px;max-height:200px;"/>
+  <button id="getInBtn" 
+          style="padding:10px;background:green;color:white;border:none;border-radius:5px;">
+          Get In
+  </button>
+`;
 
-                <button id="getInBtn" style="padding:10px;background:green;color:white;border:none;border-radius:5px;" data-id="${data.visit_id}">Get In</button>
-            `;
-
-            document.getElementById("getInBtn").addEventListener("click", () => {
-                updateStatus(data.visit_id, "arrived");
-            });
+        document.getElementById("getInBtn").addEventListener("click", () => {
+          updateStatus(data.visit_id, "arrived");
         });
-});
+      });
+  });
 
-  // ------------------------
-  // SETTINGS TABS
-  // ------------------------
   const settingsTabs = document.querySelectorAll(".settings-tab");
   const settingsContent = document.querySelectorAll(".settings-content");
 
@@ -233,11 +245,95 @@ document.getElementById("checkVisitorBtn2").addEventListener("click", () => {
     });
   });
 
-  // ------------------------
-  // LOGOUT
-  // ------------------------
   document.querySelector(".logout").addEventListener("click", () => {
     window.location.href = "login.html";
   });
 
+  const updatePasswordBtn = document.querySelector("#passwordTab .save-btn");
+  if (updatePasswordBtn) {
+    updatePasswordBtn.addEventListener("click", () => {
+      const current = document.querySelector("#passwordTab input[placeholder='Enter current password']").value;
+      const newPass = document.querySelector("#passwordTab input[placeholder='Enter new password']").value;
+      const confirmPass = document.querySelector("#passwordTab input[placeholder='Confirm new password']").value;
+
+      if(newPass.length < 6){
+          alert("Password must be at least 6 characters.");
+          return;
+      }
+      if(newPass !== confirmPass){
+          alert("Passwords do not match.");
+          return;
+      }
+
+      fetch("PHP/change_password.php", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({email: localStorage.getItem("securityEmail"), current, newPass})
+      })
+      .then(res => res.json())
+      .then(data => {
+          alert(data.message);
+      });
+    });
+  }
+
+  // ------------------------
+  // PROFILE PICTURE UPLOAD
+  // ------------------------
+  const pictureInput = document.querySelector("#pictureTab input[type='file']");
+  const previewImg = document.querySelector("#pictureTab .preview-img");
+  const uploadBtn = document.querySelector("#pictureTab .save-btn");
+
+  if(pictureInput && previewImg){
+    pictureInput.addEventListener("change", () => {
+      const file = pictureInput.files[0];
+      if(file) previewImg.src = URL.createObjectURL(file);
+    });
+  }
+
+  if(uploadBtn){
+    uploadBtn.addEventListener("click", () => {
+      const file = pictureInput.files[0];
+      if(!file){
+        alert("Please select a picture.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("email", localStorage.getItem("securityEmail"));
+      formData.append("profile_picture", file);
+
+      fetch("PHP/upload_picture.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        if(data.success && data.filename){
+          // Update preview immediately
+          if(previewImg){
+            previewImg.src = `uploads/${data.filename}?t=${Date.now()}`;
+          }
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Upload failed.");
+      });
+    });
+  }
+
+  // Load profile picture on page load
+  const securityEmail = localStorage.getItem("securityEmail");
+  if(securityEmail){
+    fetch(`PHP/get_profile.php?email=${securityEmail}`)
+      .then(res => res.json())
+      .then(data => {
+        if(data.profile_picture){
+          const img = document.querySelector(".preview-img");
+          if(img) img.src = `uploads/${data.profile_picture}?t=${Date.now()}`;
+        }
+      });
+  }
 });

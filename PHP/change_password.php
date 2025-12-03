@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+include 'db.php'; // make sure this connects to PostgreSQL using PDO
 
 // Check login
 if (!isset($_SESSION['student_id'])) {
@@ -10,10 +10,19 @@ if (!isset($_SESSION['student_id'])) {
 
 $studentID = $_SESSION['student_id'];
 
-// Get submitted data
-$currentPassword = trim($_POST['current_password']);
-$newPassword = trim($_POST['new_password']);
-$confirmPassword = trim($_POST['confirm_password']);
+// Get raw JSON input
+$data = json_decode(file_get_contents('php://input'), true);
+
+// Now extract
+$email = $data['email'] ?? '';
+$currentPassword = $data['current'] ?? '';
+$newPassword = $data['newPass'] ?? '';
+
+// Validate
+if (empty($email) || empty($currentPassword) || empty($newPassword)) {
+    echo json_encode(["success" => false, "message" => "Missing data."]);
+    exit();
+}
 
 // Validate new password match
 if ($newPassword !== $confirmPassword) {
@@ -22,17 +31,14 @@ if ($newPassword !== $confirmPassword) {
 }
 
 // Get current password hash from database
-$stmt = $conn->prepare("SELECT password FROM user_account WHERE resident_id = ?");
-$stmt->bind_param("i", $studentID);
-$stmt->execute();
-$result = $stmt->get_result();
+$stmt = $conn->prepare("SELECT password FROM user_account WHERE resident_id = :id");
+$stmt->execute([':id' => $studentID]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($result->num_rows !== 1) {
+if (!$user) {
     echo json_encode(["success" => false, "error" => "User not found."]);
     exit();
 }
-
-$user = $result->fetch_assoc();
 
 // Verify current password
 if (!password_verify($currentPassword, $user['password'])) {
@@ -44,16 +50,10 @@ if (!password_verify($currentPassword, $user['password'])) {
 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
 // Update password
-$updateStmt = $conn->prepare("UPDATE user_account SET password = ? WHERE resident_id = ?");
-$updateStmt->bind_param("si", $hashedPassword, $studentID);
-
-if ($updateStmt->execute()) {
+$updateStmt = $conn->prepare("UPDATE user_account SET password = :password WHERE resident_id = :id");
+if ($updateStmt->execute([':password' => $hashedPassword, ':id' => $studentID])) {
     echo json_encode(["success" => true, "message" => "Password updated successfully!"]);
 } else {
-    echo json_encode(["success" => false, "error" => $updateStmt->error]);
+    echo json_encode(["success" => false, "error" => "Failed to update password."]);
 }
-
-$updateStmt->close();
-$stmt->close();
-$conn->close();
 ?>

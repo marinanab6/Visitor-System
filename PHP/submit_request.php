@@ -97,8 +97,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $visitDate,
         $visitTime,
         $visitReason,
-        $studentResidentID
-        'pending'
+        $studentResidentID,
+        
     ]);
 
     if ($success) {

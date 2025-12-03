@@ -1,35 +1,46 @@
 <?php
 include "db.php";
-
 header("Content-Type: application/json");
 
-if (!isset($_GET['phone']) || $_GET['phone'] === "") {
+if (!isset($_GET['phone_number']) || $_GET['phone_number'] === "") {
     echo json_encode(["status" => "error", "message" => "Phone number missing"]);
     exit;
 }
 
-$phone = $_GET['phone'];
+$phone = $_GET['phone_number'];
 
 try {
-    $sql = "SELECT * FROM visits WHERE visitor_phone = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$phone]);
+    // Step 1: Get visitor info
+    $sqlVisitor = "SELECT * FROM visitor WHERE phone_number = ?";
+    $stmtVisitor = $conn->prepare($sqlVisitor);
+    $stmtVisitor->execute([$phone]);
 
-    if ($stmt->rowCount() == 0) {
+    if ($stmtVisitor->rowCount() === 0) {
         echo json_encode(["status" => "not_found"]);
         exit;
     }
 
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $visitor = $stmtVisitor->fetch(PDO::FETCH_ASSOC);
 
+    // Step 2: Get latest visit request for this visitor (if any)
+    $sqlVisit = "SELECT * FROM visit_table WHERE visitor_id = ? ORDER BY request_time DESC LIMIT 1";
+    $stmtVisit = $conn->prepare($sqlVisit);
+    $stmtVisit->execute([$visitor['id_number']]); // assuming visitor.id_number = visit_table.visitor_id
+
+    $visit = $stmtVisit->fetch(PDO::FETCH_ASSOC);
+
+    // Return combined info
     echo json_encode([
         "status" => "found",
-        "visit_id" => $row["visit_id"],
-        "visitor_name" => $row["visitor_name"],
-        "phone" => $row["visitor_phone"],
-        "purpose" => $row["purpose"],
-        "student_name" => $row["student_name"],
-        "room_number" => $row["room_number"]
+        "id_number" => $visitor["id_number"],
+        "full_name" => $visitor["full_name"],
+        "phone_number" => $visitor["phone_number"],
+        "email" => $visitor["email"],
+        "student_resident_id" => $visitor["student_resident_id"],
+        "visitor_photo" => $visitor["visitor_photo"] ?? null,
+        "visit_id" => $visit['visit_id'] ?? null,
+        "visit_status" => $visit['status'] ?? null,
+        "visit_time" => $visit['request_time'] ?? null
     ]);
 
 } catch (PDOException $e) {

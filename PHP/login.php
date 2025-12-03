@@ -39,7 +39,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          if ($res) {
            $_SESSION['student_id'] = $res['student_id']; 
 
-         }
+         }else {
+    $_SESSION['student_id'] = $user['id']; // fallback
+}
 }
 
             // Redirect based on role
