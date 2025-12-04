@@ -8,6 +8,11 @@
 </head>
 <body>
 
+<?php
+session_start();
+?>
+
+
 <div class="container">
 
     <!-- SIDEBAR -->
@@ -75,7 +80,7 @@
             <input type="number" id="visitorID" name="visitorID" placeholder="Enter ID number" required>
             <input type="date" id="visitDate" name="visitDate" placeholder="Enter visit date" required>
             <input type="time" id="visitTime" name="visitTime" required>
-            <input type="email" id="visitorEmail" name="visitorEmail" placeholder="Enter visitor email">
+            <input type="email" id="visitorEmail" name="visitorEmail" placeholder="Enter visitor email"  required >
             <textarea id="visitReason" name="visitReason" placeholder="State your purpose" required></textarea>
 
             <label for="visitorPhoto"><b>Upload Visitor Photo:</b></label>
@@ -162,7 +167,7 @@
                 <h3>Update Profile Picture</h3>
 
                 <div class="profile-picture-box">
-                    <img src="user.jpg" alt="Profile Picture" class="preview-img" id="previewImage">
+                    <img src="user.jpg" alt="Profile Picture" class="profile-sidebar-img"id="previewImage">
                     <input type="file" id="imageInput" accept="image/*">
                 </div>
 

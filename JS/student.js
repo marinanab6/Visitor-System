@@ -123,16 +123,78 @@ if (visitFormEl) {
                     detailsContent.innerHTML = `
                         <div style="font-size: 50px; text-align:center">${cardIcon}</div>
                         <p style="margin-top: 15px; text-align:center;">
-                            Detailed analytics for <strong>${cardTitle}</strong>.
+                         <strong>${cardTitle}</strong>.
                         </p>
                         <p style="margin-top:10px;">
-                            You can put logs, charts, tables and backend data here.
+                            
                         </p>
                     `;
                 }
             }
         });
     }
+
+    dashboardCards.addEventListener("click", (e) => {
+    if (e.target.classList.contains("details-btn")) {
+        hideAllSections();
+        if(detailsSection) detailsSection.style.display = "block";
+
+        const card = e.target.closest(".card");
+        const cardTitle = card.querySelector("h3").textContent;
+        if(title) title.textContent = cardTitle;
+        const detailsTitle = document.getElementById("detailsTitle");
+        if(detailsTitle) detailsTitle.textContent = cardTitle;
+
+        const detailsContent = document.getElementById("detailsContent");
+        if(detailsContent) {
+            detailsContent.innerHTML = "<p></p>";
+        }
+
+        // Determine request status from card title
+        let status = null;
+        if(cardTitle.toLowerCase().includes("denied")) status = "rejected";
+        else if(cardTitle.toLowerCase().includes("accepted")) status = "approved";
+
+        // Fetch requests for this student and status
+        let url = "PHP/get_requests.php";
+        if(status) url += `?status=${status}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    detailsContent.innerHTML = `<p style="color:red;">${data.error}</p>`;
+                    return;
+                }
+
+                if(data.length === 0) {
+                    detailsContent.innerHTML = "<p>No requests found.</p>";
+                    return;
+                }
+
+                let html = "<table border='1' style='width:100%; border-collapse:collapse;'>";
+                html += "<tr><th>Visitor ID</th><th>Date</th><th>Time</th><th>Reason</th><th>Status</th></tr>";
+
+                data.forEach(req => {
+                    html += `<tr>
+                        <td>${req.visitor_id || "-"}</td>
+                        <td>${req.visit_date}</td>
+                        <td>${req.visit_time}</td>
+                        <td>${req.visit_reason}</td>
+                        <td>${req.status}</td>
+                    </tr>`;
+                });
+
+                html += "</table>";
+                detailsContent.innerHTML = html;
+            })
+            .catch(err => {
+                console.error(err);
+                detailsContent.innerHTML = "<p style='color:red;'>Failed to load requests.</p>";
+            });
+    }
+});
+
 
     // =================== BACK TO DASHBOARD ===================
     const backToDashboard = document.getElementById("backToDashboard");
@@ -223,27 +285,53 @@ if (visitFormEl) {
     }
 
     // =================== PROFILE PICTURE ===================
-    const imageInput = document.getElementById("imageInput");
-    const previewImage = document.getElementById("previewImage");
-    const savePicBtn = document.querySelector("#pictureTab .save-btn");
-    
+    // =================== PROFILE PICTURE UPLOAD ===================
+const imageInput = document.getElementById("imageInput");
+const previewImage = document.getElementById("previewImage");
+const savePicBtn = document.querySelector("#pictureTab .save-btn");
 
-    if(savePicBtn) {
-        savePicBtn.addEventListener("click", () => {
-            if (!imageInput || imageInput.files.length === 0) {
-                alert("Please choose a picture first.");
-                return;
+// Preview the selected image
+if(imageInput && previewImage){
+    imageInput.addEventListener("change", () => {
+        const file = imageInput.files[0];
+        if(file) previewImage.src = URL.createObjectURL(file);
+    });
+}
+
+// Upload and save the profile picture
+if(savePicBtn){
+    savePicBtn.addEventListener("click", () => {
+        if(!imageInput || imageInput.files.length === 0){
+            alert("❌ Please choose a picture first.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('profileImage', imageInput.files[0]);
+
+        fetch('PHP/update_profile.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                alert("✅ Profile picture updated successfully!");
+                
+                // Update the sidebar/dashboard profile image
+                const dashboardImg = document.querySelector(".profile-sidebar-img");
+                if(dashboardImg) dashboardImg.src = data.imagePath + "?t=" + new Date().getTime(); // cache-busting
+            } else {
+                alert("❌ Failed to update profile picture.");
             }
-            alert("Profile picture updated successfully!");
+        })
+        .catch(err => {
+            console.error(err);
+            alert("❌ Error uploading profile picture.");
         });
-    }
+    });
+}
 
-    if(imageInput && previewImage) {
-        imageInput.addEventListener("change", () => {
-            const file = imageInput.files[0];
-            if (file) previewImage.src = URL.createObjectURL(file);
-        });
-    }
 
     // =================== LOGOUT ===================
     const logoutBtn = document.querySelector(".logout");
@@ -302,7 +390,7 @@ if (visitFormEl) {
                     console.error(data.error);
                     return;
                 }
-
+                 console.log('Dashboard data:', data.denied, data.accepted, data.total);
                 const cards = document.querySelectorAll('.card');
                 if(cards.length >= 3) {
                     cards[0].querySelector('h3').innerText = `Requests Denied: ${data.denied}`;

@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const phoneCheckTableBody = document.getElementById("phoneCheckTableBody");
     phoneCheckTableBody.innerHTML = "";
 
+
+   console.log(visitor);
     phoneCheckTableBody.innerHTML = `
       <tr id="visitor-${visitor.id_number}">
         <td>${visitor.id_number ?? "-"}</td>
@@ -210,14 +212,14 @@ document.addEventListener("DOMContentLoaded", () => {
           container.innerHTML = "<p style='color:red;'>Visitor not found.</p>";
           return;
         }
-
+         console.log("visitor photo:", data.visitor_photo);
         container.innerHTML = `
   <p><strong>Name:</strong> ${data.full_name}</p>
   <p><strong>Phone:</strong> ${data.phone_number}</p>
   <p><strong>Visitor ID:</strong> ${data.id_number}</p>
   <p><strong>Student:</strong> ${data.student_resident_id}</p>
   <p><strong>Email:</strong> ${data.email}</p>
-  <img src="uploads/${data.visitor_photo}" 
+  <img src="PHP/uploads/${data.visitor_photo}" 
        alt="Visitor Photo" 
        style="max-width:200px;max-height:200px;"/>
   <button id="getInBtn" 
@@ -226,9 +228,37 @@ document.addEventListener("DOMContentLoaded", () => {
   </button>
 `;
 
+
+function checkInVisitor(visitorData) {
+  // Check if visitor is already in the visitors array
+  const exists = visitors.find(v => v.id === visitorData.id_number);
+  if(exists){
+    alert("Visitor already checked in!");
+    return;
+  }
+
+  const visitor = {
+    name: visitorData.full_name,
+    id: visitorData.id_number,
+    phone: visitorData.phone_number,
+    resident: visitorData.student_resident_id || "-",
+    reason: visitorData.reason || "-",
+    status: "checked-in",
+    timeIn: new Date().toLocaleTimeString(),
+    timeOut: ""
+  };
+
+  visitors.push(visitor);
+  updateCounts();
+  updateTable();
+
+  alert(`${visitor.name} has been checked in successfully!`);
+}
+
+
         document.getElementById("getInBtn").addEventListener("click", () => {
-          updateStatus(data.visit_id, "arrived");
-        });
+  checkInVisitor(data);
+});
       });
   });
 

@@ -140,7 +140,7 @@
                     <label>Confirm Password</label>
                     <input type="password">
 
-                    <button class="save-btn">Update Password</button>
+                    <button type="button" class="save-btn" id="updatePasswordBtn">Update Password</button>
                 </form>
             </div>
 
@@ -159,25 +159,42 @@
 
             
 
-            <!-- ACCOUNT ACTIONS -->
-            <div id="accountTab" class="settings-content" style="display:none;">
-                <h3>Account Actions</h3>
-                <button class="danger-btn">Disable Account</button>
-                <button class="danger-btn">Delete Account</button>
+       <!-- ACCOUNT ACTIONS -->
+<div id="accountTab" class="settings-content" style="display:none;">
+    <h3>Account Actions</h3>
 
-         <div id="deleteOptions" style="display:none; margin-top:15px;">
-        <p>Select account type to delete:</p>
-        <button class="delete-role-btn" data-role="manager">Manager</button>
-        <button class="delete-role-btn" data-role="student">Student</button>
-        <button class="delete-role-btn" data-role="security">Security Officer</button>
+    <!-- Step 1: Select Role -->
+    <div style="margin-bottom: 15px;">
+        <label for="selectRole">Select Role:</label>
+        <select id="selectRole">
+            <option value="">-- Select Role --</option>
+            <option value="student">Student</option>
+            <option value="manager">Manager</option>
+            <option value="security">Security Officer</option>
+        </select>
+    </div>
+
+    <!-- Step 2: Enter User ID -->
+    <div style="margin-bottom: 15px;">
+        <label for="userIdInput">Enter User ID:</label>
+        <input type="text" id="userIdInput" placeholder="Enter user ID">
+        <button id="fetchUserBtn" style="background-color: green; width:fit-content">Fetch User Details</button>
+    </div>
+
+    <!-- Step 3: Show user details -->
+    <div id="userDetails" style="margin-bottom: 15px; display:none;">
+        <h4>User Details:</h4>
+        <p id="userName"></p>
+        <p id="userEmail"></p>
+    </div>
+
+    <!-- Step 4: Actions -->
+    <div id="accountActions" style="display:none;">
+        <button class="danger-btn" id="disableAccountBtn">Disable Account</button>
+        <button class="danger-btn" id="deleteAccountBtn">Delete Account</button>
     </div>
 </div>
-            </div>
 
-        </section>
-
-    </main>
-</div>
 
 <script src="JS/admin.js"></script>
 </body>

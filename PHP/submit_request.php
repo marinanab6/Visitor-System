@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         VALUES (?, ?, ?, ?, ?, ?)
     ");
 
-    $visitorEmail = "";
+    $visitorEmail = trim($_POST['visitorEmail']);
 
     $stmtVisitor->execute([
         $visitorName,
@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($success) {
         echo "<h2>Request Submitted Successfully 🎉</h2>";
-        echo "<a href='../student.html'>Go back to Dashboard</a>";
+        echo "<a href='../student.php'>Go back to Dashboard</a>";
     } else {
         echo "Error submitting request.";
     }

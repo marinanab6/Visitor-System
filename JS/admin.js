@@ -44,6 +44,103 @@ const emailDisplay = document.querySelector(".email"); // sidebar element
 
             if (target === "notifications") fetchNotifications();
         });
+
+        // -------------------- FETCH USER BY ID --------------------
+const fetchUserBtn = document.getElementById("fetchUserBtn");
+if (fetchUserBtn) {
+    fetchUserBtn.addEventListener("click", () => {
+        const role = document.getElementById("selectRole").value;
+        const userId = document.getElementById("userIdInput").value.trim();
+
+        if (!role) { alert("Please select a role first."); return; }
+        if (!userId) { alert("Please enter a user ID."); return; }
+
+        // make sure path matches where your PHP file is
+        fetch(`PHP/get_user_by_id.php?role=${encodeURIComponent(role)}&id=${encodeURIComponent(userId)}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Network response not ok");
+                return res.json();
+            })
+            .then(user => {
+                if (!user) {
+                    alert("User not found.");
+                    document.getElementById("userDetails").style.display = "none";
+                    document.getElementById("accountActions").style.display = "none";
+                    return;
+                }
+
+                document.getElementById("userDetails").style.display = "block";
+                document.getElementById("userName").textContent = `Name: ${user.name}`;
+                document.getElementById("userEmail").textContent = `Email: ${user.email}`;
+                document.getElementById("accountActions").style.display = "block";
+            })
+            .catch(err => {
+                console.error("Fetch user error:", err);
+                alert("Error fetching user — check console/Network tab.");
+            });
+    });
+}
+
+const disableBtn = document.getElementById("disableAccountBtn");
+const deleteBtn = document.getElementById("deleteAccountBtn");
+
+if (disableBtn) {
+    disableBtn.addEventListener("click", () => {
+        const userId = document.getElementById("userIdInput").value.trim();
+        const role = document.getElementById("selectRole").value;
+
+        if (!userId || !role) {
+            alert("Select role and enter user ID first.");
+            return;
+        }
+
+        fetch("PHP/disable_user.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, role })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if(data.success) {
+                document.getElementById("userDetails").style.display = "none";
+                document.getElementById("accountActions").style.display = "none";
+            }
+        })
+        .catch(err => console.error(err));
+    });
+}
+
+if (deleteBtn) {
+    deleteBtn.addEventListener("click", () => {
+        const userId = document.getElementById("userIdInput").value.trim();
+        const role = document.getElementById("selectRole").value;
+
+        if (!userId || !role) {
+            alert("Select role and enter user ID first.");
+            return;
+        }
+
+        fetch("PHP/delete_user.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, role })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if(data.success) {
+                document.getElementById("userDetails").style.display = "none";
+                document.getElementById("accountActions").style.display = "none";
+            }
+        })
+        .catch(err => console.error(err));
+    });
+}
+
+
+
+
     });
 
     // -------------------- DASHBOARD CARD DETAILS --------------------
@@ -241,12 +338,34 @@ document.querySelectorAll(".view-details-btn").forEach(btn => {
     fetchDashboardCounts();
 });
 
-const updatePasswordBtn = document.querySelector("#passwordTab .save-btn");
-if (updatePasswordBtn) {
+
+// SETTINGS TAB SWITCHING
+const settingsTabs = document.querySelectorAll(".settings-tab");
+const settingsContents = document.querySelectorAll(".settings-content");
+
+settingsTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+        // remove active class
+        settingsTabs.forEach(t => t.classList.remove("active"));
+        settingsContents.forEach(c => c.style.display = "none");
+
+        // activate selected tab
+        tab.classList.add("active");
+        const targetId = tab.dataset.tab;
+        const targetContent = document.getElementById(targetId);
+        if(targetContent) targetContent.style.display = "block";
+    });
+});
+
+
+const updatePasswordBtn = document.getElementById("updatePasswordBtn");
+
+if(updatePasswordBtn){
     updatePasswordBtn.addEventListener("click", () => {
-        const current = document.querySelector("#passwordTab input[placeholder='Enter current password']").value;
-        const newPass = document.querySelector("#passwordTab input[placeholder='Enter new password']").value;
-        const confirmPass = document.querySelector("#passwordTab input[placeholder='Confirm new password']").value;
+        const passwordInputs = document.querySelectorAll("#passwordTab input[type='password']");
+        const current = passwordInputs[0].value;
+        const newPass = passwordInputs[1].value;
+        const confirmPass = passwordInputs[2].value;
 
         if(newPass.length < 6){
             alert("Password must be at least 6 characters.");
@@ -257,18 +376,24 @@ if (updatePasswordBtn) {
             return;
         }
 
-        // Call backend PHP to update password
+        // Call backend PHP
         fetch("PHP/change_password.php", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({email: localStorage.getItem("securityEmail"), current, newPass})
+            body: JSON.stringify({
+                email: localStorage.getItem("adminEmail"),
+                current,
+                newPass
+            })
         })
         .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-        });
+        .then(data => alert(data.message))
+        .catch(err => console.error(err));
     });
 }
+
+
+
 
 const pictureInput = document.querySelector("#pictureTab input[type='file']");
 const previewImg = document.querySelector("#pictureTab .preview-img");
@@ -290,7 +415,7 @@ if(uploadBtn){
         }
 
         const formData = new FormData();
-        formData.append("email", localStorage.getItem("securityEmail"));
+        formData.append("email", localStorage.getItem("adminEmail"));
         formData.append("profile_picture", file);
 
         fetch("PHP/upload_picture.php", {
@@ -300,21 +425,14 @@ if(uploadBtn){
         .then(res => res.json())
         .then(data => {
             alert(data.message);
-        });
+            if(data.success && data.imagePath){
+                previewImg.src = data.imagePath + "?t=" + new Date().getTime();
+            }
+        })
+        .catch(err => console.error(err));
     });
 }
 
 
 
-const adminEmail = localStorage.getItem("adminEmail");
-if(adminEmail){
-    fetch(`PHP/get_profile.php?email=${adminEmail}`)
-        .then(res => res.json())
-        .then(data => {
-            if(data.profile_picture){
-                const img = document.querySelector(".preview-img");
-                if(img) img.src = `uploads/${data.profile_picture}?t=${Date.now()}`;
-            }
-        });
-}
 

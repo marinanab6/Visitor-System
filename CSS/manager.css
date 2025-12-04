@@ -354,7 +354,10 @@ body {
     border-radius: 20px;
     margin-top: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.08);
-    
+    /* Make sure width is fixed or matches parent */
+    max-width: 1000px; /* example width, adjust as needed */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #requests h2 {
@@ -395,7 +398,7 @@ body {
 
 /* REQUESTS TABLE */
 .requests-table {
-    width: 100%;
+    width: 100%; /* full width of #requests section */
     border-collapse: collapse;
     margin-top: 10px;
     background: white;
@@ -403,7 +406,6 @@ body {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-
 .requests-table th {
     background: #0D47A1;
     color: white;

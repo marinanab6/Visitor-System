@@ -38,6 +38,34 @@ if (loginEmail) {
         }
     });
 
+// -------------------- Search requests --------------------
+const searchInput = document.getElementById("searchInput");
+
+if (searchInput) {
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase().trim();
+
+        // Filter based on search AND current status filter
+        let filtered = allRequests.filter(r =>
+            r.visitor_name.toLowerCase().includes(query) ||
+            (r.student_name && r.student_name.toLowerCase().includes(query)) ||
+            (r.visit_reason && r.visit_reason.toLowerCase().includes(query))
+        );
+
+        // Check if a status filter is active
+        const activeFilter = document.querySelector(".req-filter.active");
+        if (activeFilter) {
+            const type = activeFilter.dataset.type;
+            if (type !== "all") {
+                filtered = filtered.filter(r => r.status === type);
+            }
+        }
+
+        renderRequestsTable(filtered);
+    });
+}
+
+
     
 
     // --- NAVIGATION ---
@@ -228,7 +256,13 @@ settingsTabs.forEach(tab => {
         if (targetContent) targetContent.style.display = "block";
     });
 });
-
+const defaultTab = settingsTabs[0]; // first tab
+if (defaultTab) {
+    defaultTab.classList.add("active");
+    const defaultContentId = defaultTab.dataset.tab;
+    const defaultContent = document.getElementById(defaultContentId);
+    if (defaultContent) defaultContent.style.display = "block";
+}
 
   
 
